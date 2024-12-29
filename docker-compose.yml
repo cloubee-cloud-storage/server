@@ -1,0 +1,31 @@
+# Определяем сервисы, которые будут запускаться в контейнерах
+services:
+  # Сервис базы данных PostgreSQL
+  db:
+    # Имя контейнера
+    container_name: postgres
+    # Образ для создания контейнера
+    image: postgres:15.2
+    # Политика перезапуска контейнера
+    restart: always
+    # Переменные окружения для настройки базы данных
+    environment:
+      - POSTGRES_USER=${POSTGRES_USER}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+    # Порты для доступа к базе данных
+    ports:
+      - "5433:5432"
+    # Подключение постоянного хранилища для данных базы данных
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    # Подключение к сети cloubee-server
+    networks:
+      - cloubee-server
+
+# Определяем постоянные хранилища для данных
+volumes:
+  postgres_data:
+
+# Определяем сеть для взаимодействия между контейнерами
+networks:
+  cloubee-server:
