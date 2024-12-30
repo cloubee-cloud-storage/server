@@ -9,16 +9,15 @@ datasource db {
 }
 
 model User {
-  id        String    @id @default(uuid())
-  email     String    @unique
+  id        String   @id @default(uuid())
+  email     String   @unique
   password  String
-  role      Role      @default(USER)
-  quota     Int       @default(0)
-  usedSpace Int       @default(0) @map("used_space")
-  createdAt DateTime  @default(now()) @map("created_at")
-  updatedAt DateTime  @updatedAt @map("updated_at")
+  role      Role     @default(USER)
+  quota     Int      @default(0)
+  usedSpace Int      @default(0) @map("used_space")
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
   files     File[]
-  sessions  Session[]
 
   @@map("users")
 }
@@ -36,19 +35,6 @@ model File {
   updatedAt DateTime @updatedAt @map("updated_at")
 
   @@map("files")
-}
-
-model Session {
-  id        String   @id @default(uuid())
-  userId    String   @map("user_id")
-  user      User     @relation(fields: [userId], references: [id])
-  token     String   @unique
-  ipAddress String?  @map("ip_address")
-  userAgent String?  @map("user_agent")
-  expiresAt DateTime @map("expires_at")
-  createdAt DateTime @default(now()) @map("created_at")
-
-  @@map("sessions")
 }
 
 enum Role {
