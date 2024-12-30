@@ -6,7 +6,7 @@
   "bracketSpacing": true,
   "arrowParens": "avoid",
   "endOfLine": "lf",
-  "tabWidth": 2,
+  "tabWidth": 4,
   "importOrderSeparation": true,
   "importOrderSortSpecifiers": true,
   "importOrderCaseInsensitive": true,
