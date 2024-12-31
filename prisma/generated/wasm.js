@@ -128,6 +128,15 @@ exports.Prisma.UserScalarFieldEnum = {
   updatedAt: 'updatedAt'
 };
 
+exports.Prisma.InviteScalarFieldEnum = {
+  id: 'id',
+  email: 'email',
+  token: 'token',
+  role: 'role',
+  quota: 'quota',
+  createdAt: 'createdAt'
+};
+
 exports.Prisma.FileScalarFieldEnum = {
   id: 'id',
   userId: 'userId',
@@ -161,6 +170,7 @@ exports.Role = exports.$Enums.Role = {
 
 exports.Prisma.ModelName = {
   User: 'User',
+  Invite: 'Invite',
   File: 'File'
 };
 

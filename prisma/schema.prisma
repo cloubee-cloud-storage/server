@@ -22,6 +22,17 @@ model User {
     @@map("users")
 }
 
+model Invite {
+    id        String   @id @default(uuid())
+    email     String   @unique
+    token     String   @unique
+    role      Role     @default(USER)
+    quota     Int?
+    createdAt DateTime @default(now()) @map("created_at")
+
+    @@map("invite")
+}
+
 model File {
     id        String   @id @default(uuid())
     userId    String   @map("user_id")
