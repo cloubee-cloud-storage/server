@@ -40,7 +40,7 @@ export class AuthService {
         };
     }
 
-    async register(token: string, password: string) {
+    async register(token: string, name: string, password: string) {
         try {
             const invite = await this.prisma.invite.findUnique({
                 where: { token },
@@ -49,6 +49,7 @@ export class AuthService {
             const hashedPassword = await bcrypt.hash(password, 10);
             await this.prisma.user.create({
                 data: {
+                    name: name,
                     email: invite.email,
                     password: hashedPassword,
                     role: invite.role,

@@ -22,6 +22,7 @@ export class AuthController {
     register(@Body() registerDto: RegisterDto) {
         return this.authService.register(
             registerDto.token,
+            registerDto.name,
             registerDto.password,
         );
     }
