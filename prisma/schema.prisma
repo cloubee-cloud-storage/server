@@ -31,7 +31,7 @@ model Invite {
     quota     Int?
     createdAt DateTime @default(now()) @map("created_at")
 
-    @@map("invite")
+    @@map("invites")
 }
 
 model File {

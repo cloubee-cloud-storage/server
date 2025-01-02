@@ -6,7 +6,7 @@ import { PrismaService } from '@/core/prisma/prisma.service';
 import { Role } from '../../../prisma/generated';
 
 @Injectable()
-export class InviteService {
+export class InvitesService {
     constructor(private readonly prisma: PrismaService) {}
     async createInvite(email: string, role: Role, quota: number) {
         const existingInvite = await this.prisma.invite.findFirst({

@@ -15,12 +15,12 @@ import { JwtAuthGuard } from '@/shared/guards/jwt-auth.guard';
 import { RolesGuard } from '@/shared/guards/roles.guard';
 
 import { CreateInviteDto } from './dto/create-invite.dto';
-import { InviteService } from './invite.service';
+import { InvitesService } from './invites.service';
 
 @Controller('invites')
 @ApiTags('Invites')
-export class InviteController {
-    constructor(private readonly inviteService: InviteService) {}
+export class InvitesController {
+    constructor(private readonly inviteService: InvitesService) {}
 
     @Get()
     @UseGuards(JwtAuthGuard, RolesGuard)
