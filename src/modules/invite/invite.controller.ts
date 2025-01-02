@@ -42,12 +42,12 @@ export class InviteController {
         );
     }
 
-    @Get('check/:token')
+    @Get(':token')
     checkInvite(@Param('token') token: string) {
         return this.inviteService.checkInvite(token);
     }
 
-    @Delete('delete/:inviteId')
+    @Delete(':inviteId')
     @UseGuards(JwtAuthGuard, RolesGuard)
     @Roles(Role.ADMIN)
     @ApiBearerAuth()
