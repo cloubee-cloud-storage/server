@@ -1,22 +1,22 @@
-import {
-    ForbiddenException,
-    Injectable,
-    NotFoundException,
-    UnauthorizedException,
-} from '@nestjs/common';
+import { ForbiddenException, Injectable, NotFoundException, UnauthorizedException } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import * as bcrypt from 'bcrypt';
 
 import { PrismaService } from '@/core/prisma/prisma.service';
 
 import { AuthEntity } from './entity/auth.entity';
+import path from 'node:path';
+import fs from 'node:fs';
+import { ConfigService } from '@nestjs/config';
 
 @Injectable()
 export class AuthService {
     constructor(
         private prisma: PrismaService,
         private jwtService: JwtService,
-    ) {}
+        private readonly config: ConfigService,
+    ) {
+    }
 
     async login(email: string, password: string): Promise<AuthEntity> {
         const user = await this.prisma.user.findUnique({
@@ -47,7 +47,7 @@ export class AuthService {
             });
 
             const hashedPassword = await bcrypt.hash(password, 10);
-            await this.prisma.user.create({
+            const user = await this.prisma.user.create({
                 data: {
                     name: name,
                     email: invite.email,
@@ -56,6 +56,13 @@ export class AuthService {
                     quota: invite.quota,
                 },
             });
+
+            const userFolder = path.join(this.config.getOrThrow<string>('STORAGE_PATH'), user.id);
+
+            if (!fs.existsSync(userFolder)) {
+                fs.mkdirSync(path.join(userFolder, 'files'), { recursive: true });
+                fs.mkdirSync(path.join(userFolder, 'thumbnails'), { recursive: true });
+            }
 
             await this.prisma.invite.delete({
                 where: { token },
