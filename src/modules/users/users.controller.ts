@@ -12,38 +12,38 @@ import { Role } from '../../../prisma/generated';
 
 import { UsersService } from './users.service';
 
-@Controller()
+@Controller('users')
 @UseGuards(JwtAuthGuard)
 @ApiTags('Users')
 @ApiBearerAuth()
 export class UsersController {
     constructor(private readonly usersService: UsersService) {}
 
-    @Get('users')
+    @Get('list')
     @UseGuards(RolesGuard)
     @Roles(Role.ADMIN)
     findAll() {
         return this.usersService.findAll();
     }
 
-    @Get('/user/me')
+    @Get('me')
     getCurrentUser(@UserId() id: string) {
         return this.usersService.findById(id);
     }
 
-    @Post('/user/me')
+    @Post('me')
     updateCurrentUser(@UserId() id: string, @Body() dto: UpdateCurrentUserDto) {
         return this.usersService.updateCurrentUser(id, dto.name, dto.password);
     }
 
-    @Get('/user/:id')
+    @Get(':id')
     @UseGuards(RolesGuard)
     @Roles(Role.ADMIN)
     findById(@Param('id') id: string) {
         return this.usersService.findById(id);
     }
 
-    @Post('/user/:id')
+    @Post(':id')
     @UseGuards(RolesGuard)
     @Roles(Role.ADMIN)
     updateUserByAdmin(

@@ -7,6 +7,7 @@ import { UsersModule } from '@/modules/users/users.module';
 import { IS_DEV_ENV } from '@/shared/utils/is-dev.util';
 
 import { PrismaModule } from './prisma/prisma.module';
+import { FilesModule } from '@/modules/files/files.module';
 
 @Module({
     imports: [
@@ -18,6 +19,7 @@ import { PrismaModule } from './prisma/prisma.module';
         UsersModule,
         AuthModule,
         InvitesModule,
+        FilesModule,
     ],
 })
 export class CoreModule {}
