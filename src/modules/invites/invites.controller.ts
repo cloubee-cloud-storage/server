@@ -38,7 +38,7 @@ export class InvitesController {
         return this.inviteService.createInvite(
             createInviteDto.email,
             createInviteDto.role,
-            createInviteDto.quota,
+            createInviteDto.storageQuota,
         );
     }
 
@@ -47,11 +47,11 @@ export class InvitesController {
         return this.inviteService.checkInvite(token);
     }
 
-    @Delete(':inviteId')
+    @Delete(':id')
     @UseGuards(JwtAuthGuard, RolesGuard)
     @Roles(Role.ADMIN)
     @ApiBearerAuth()
-    deleteInvite(@Param('inviteId') id: string) {
+    deleteInvite(@Param('id') id: string) {
         return this.inviteService.deleteInvite(id);
     }
 }

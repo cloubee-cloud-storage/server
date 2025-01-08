@@ -40,27 +40,15 @@ export namespace $Enums {
 
 export type Role = (typeof Role)[keyof typeof Role]
 
-
-export const FileType: {
-  FILE: 'FILE',
-  DIR: 'DIR'
-};
-
-export type FileType = (typeof FileType)[keyof typeof FileType]
-
 }
 
 export type Role = $Enums.Role
 
 export const Role: typeof $Enums.Role
 
-export type FileType = $Enums.FileType
-
-export const FileType: typeof $Enums.FileType
-
 /**
  * ##  Prisma Client ʲˢ
- * 
+ *
  * Type-safe database client for TypeScript & Node.js
  * @example
  * ```
@@ -69,7 +57,7 @@ export const FileType: typeof $Enums.FileType
  * const users = await prisma.user.findMany()
  * ```
  *
- * 
+ *
  * Read more in our [docs](https://www.prisma.io/docs/reference/tools-and-interfaces/prisma-client).
  */
 export class PrismaClient<
@@ -81,7 +69,7 @@ export class PrismaClient<
 
     /**
    * ##  Prisma Client ʲˢ
-   * 
+   *
    * Type-safe database client for TypeScript & Node.js
    * @example
    * ```
@@ -90,7 +78,7 @@ export class PrismaClient<
    * const users = await prisma.user.findMany()
    * ```
    *
-   * 
+   *
    * Read more in our [docs](https://www.prisma.io/docs/reference/tools-and-interfaces/prisma-client).
    */
 
@@ -120,7 +108,7 @@ export class PrismaClient<
    * ```
    * const result = await prisma.$executeRaw`UPDATE User SET cool = ${true} WHERE email = ${'user@email.com'};`
    * ```
-   * 
+   *
    * Read more in our [docs](https://www.prisma.io/docs/reference/tools-and-interfaces/prisma-client/raw-database-access).
    */
   $executeRaw<T = unknown>(query: TemplateStringsArray | Prisma.Sql, ...values: any[]): Prisma.PrismaPromise<number>;
@@ -132,7 +120,7 @@ export class PrismaClient<
    * ```
    * const result = await prisma.$executeRawUnsafe('UPDATE User SET cool = $1 WHERE email = $2 ;', true, 'user@email.com')
    * ```
-   * 
+   *
    * Read more in our [docs](https://www.prisma.io/docs/reference/tools-and-interfaces/prisma-client/raw-database-access).
    */
   $executeRawUnsafe<T = unknown>(query: string, ...values: any[]): Prisma.PrismaPromise<number>;
@@ -143,7 +131,7 @@ export class PrismaClient<
    * ```
    * const result = await prisma.$queryRaw`SELECT * FROM User WHERE id = ${1} OR email = ${'user@email.com'};`
    * ```
-   * 
+   *
    * Read more in our [docs](https://www.prisma.io/docs/reference/tools-and-interfaces/prisma-client/raw-database-access).
    */
   $queryRaw<T = unknown>(query: TemplateStringsArray | Prisma.Sql, ...values: any[]): Prisma.PrismaPromise<T>;
@@ -155,7 +143,7 @@ export class PrismaClient<
    * ```
    * const result = await prisma.$queryRawUnsafe('SELECT * FROM User WHERE id = $1 OR email = $2;', 1, 'user@email.com')
    * ```
-   * 
+   *
    * Read more in our [docs](https://www.prisma.io/docs/reference/tools-and-interfaces/prisma-client/raw-database-access).
    */
   $queryRawUnsafe<T = unknown>(query: string, ...values: any[]): Prisma.PrismaPromise<T>;
@@ -179,7 +167,9 @@ export class PrismaClient<
   $transaction<R>(fn: (prisma: Omit<PrismaClient, runtime.ITXClientDenyList>) => $Utils.JsPromise<R>, options?: { maxWait?: number, timeout?: number, isolationLevel?: Prisma.TransactionIsolationLevel }): $Utils.JsPromise<R>
 
 
-  $extends: $Extensions.ExtendsHook<"extends", Prisma.TypeMapCb, ExtArgs>
+  $extends: $Extensions.ExtendsHook<"extends", Prisma.TypeMapCb, ExtArgs, $Utils.Call<Prisma.TypeMapCb, {
+    extArgs: ExtArgs
+  }>, ClientOptions>
 
       /**
    * `prisma.user`: Exposes CRUD operations for the **User** model.
@@ -189,7 +179,7 @@ export class PrismaClient<
     * const users = await prisma.user.findMany()
     * ```
     */
-  get user(): Prisma.UserDelegate<ExtArgs>;
+  get user(): Prisma.UserDelegate<ExtArgs, ClientOptions>;
 
   /**
    * `prisma.invite`: Exposes CRUD operations for the **Invite** model.
@@ -199,7 +189,7 @@ export class PrismaClient<
     * const invites = await prisma.invite.findMany()
     * ```
     */
-  get invite(): Prisma.InviteDelegate<ExtArgs>;
+  get invite(): Prisma.InviteDelegate<ExtArgs, ClientOptions>;
 
   /**
    * `prisma.file`: Exposes CRUD operations for the **File** model.
@@ -209,7 +199,7 @@ export class PrismaClient<
     * const files = await prisma.file.findMany()
     * ```
     */
-  get file(): Prisma.FileDelegate<ExtArgs>;
+  get file(): Prisma.FileDelegate<ExtArgs, ClientOptions>;
 }
 
 export namespace Prisma {
@@ -268,8 +258,8 @@ export namespace Prisma {
   export import Exact = $Public.Exact
 
   /**
-   * Prisma Client JS version: 6.1.0
-   * Query Engine version: 11f085a2012c0f4778414c8db2651556ee0ef959
+   * Prisma Client JS version: 6.2.1
+   * Query Engine version: 4123509d24aa4dede1e864b46351bf2790323b69
    */
   export type PrismaVersion = {
     client: string
@@ -724,6 +714,10 @@ export namespace Prisma {
             args: Prisma.UserUpdateManyArgs<ExtArgs>
             result: BatchPayload
           }
+          updateManyAndReturn: {
+            args: Prisma.UserUpdateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$UserPayload>[]
+          }
           upsert: {
             args: Prisma.UserUpsertArgs<ExtArgs>
             result: $Utils.PayloadToResult<Prisma.$UserPayload>
@@ -794,6 +788,10 @@ export namespace Prisma {
             args: Prisma.InviteUpdateManyArgs<ExtArgs>
             result: BatchPayload
           }
+          updateManyAndReturn: {
+            args: Prisma.InviteUpdateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$InvitePayload>[]
+          }
           upsert: {
             args: Prisma.InviteUpsertArgs<ExtArgs>
             result: $Utils.PayloadToResult<Prisma.$InvitePayload>
@@ -863,6 +861,10 @@ export namespace Prisma {
           updateMany: {
             args: Prisma.FileUpdateManyArgs<ExtArgs>
             result: BatchPayload
+          }
+          updateManyAndReturn: {
+            args: Prisma.FileUpdateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$FilePayload>[]
           }
           upsert: {
             args: Prisma.FileUpsertArgs<ExtArgs>
@@ -949,8 +951,27 @@ export namespace Prisma {
       timeout?: number
       isolationLevel?: Prisma.TransactionIsolationLevel
     }
+    /**
+     * Global configuration for omitting model fields by default.
+     * 
+     * @example
+     * ```
+     * const prisma = new PrismaClient({
+     *   omit: {
+     *     user: {
+     *       password: true
+     *     }
+     *   }
+     * })
+     * ```
+     */
+    omit?: Prisma.GlobalOmitConfig
   }
-
+  export type GlobalOmitConfig = {
+    user?: UserOmit
+    invite?: InviteOmit
+    file?: FileOmit
+  }
 
   /* Types for Logging */
   export type LogLevel = 'info' | 'query' | 'warn' | 'error'
@@ -991,6 +1012,7 @@ export namespace Prisma {
     | 'createManyAndReturn'
     | 'update'
     | 'updateMany'
+    | 'updateManyAndReturn'
     | 'upsert'
     | 'delete'
     | 'deleteMany'
@@ -1086,13 +1108,13 @@ export namespace Prisma {
   }
 
   export type UserAvgAggregateOutputType = {
-    quota: number | null
-    usedSpace: number | null
+    storageQuota: number | null
+    usedQuota: number | null
   }
 
   export type UserSumAggregateOutputType = {
-    quota: number | null
-    usedSpace: number | null
+    storageQuota: number | null
+    usedQuota: number | null
   }
 
   export type UserMinAggregateOutputType = {
@@ -1100,9 +1122,10 @@ export namespace Prisma {
     name: string | null
     email: string | null
     password: string | null
+    avatarPath: string | null
     role: $Enums.Role | null
-    quota: number | null
-    usedSpace: number | null
+    storageQuota: number | null
+    usedQuota: number | null
     createdAt: Date | null
     updatedAt: Date | null
   }
@@ -1112,9 +1135,10 @@ export namespace Prisma {
     name: string | null
     email: string | null
     password: string | null
+    avatarPath: string | null
     role: $Enums.Role | null
-    quota: number | null
-    usedSpace: number | null
+    storageQuota: number | null
+    usedQuota: number | null
     createdAt: Date | null
     updatedAt: Date | null
   }
@@ -1124,9 +1148,10 @@ export namespace Prisma {
     name: number
     email: number
     password: number
+    avatarPath: number
     role: number
-    quota: number
-    usedSpace: number
+    storageQuota: number
+    usedQuota: number
     createdAt: number
     updatedAt: number
     _all: number
@@ -1134,13 +1159,13 @@ export namespace Prisma {
 
 
   export type UserAvgAggregateInputType = {
-    quota?: true
-    usedSpace?: true
+    storageQuota?: true
+    usedQuota?: true
   }
 
   export type UserSumAggregateInputType = {
-    quota?: true
-    usedSpace?: true
+    storageQuota?: true
+    usedQuota?: true
   }
 
   export type UserMinAggregateInputType = {
@@ -1148,9 +1173,10 @@ export namespace Prisma {
     name?: true
     email?: true
     password?: true
+    avatarPath?: true
     role?: true
-    quota?: true
-    usedSpace?: true
+    storageQuota?: true
+    usedQuota?: true
     createdAt?: true
     updatedAt?: true
   }
@@ -1160,9 +1186,10 @@ export namespace Prisma {
     name?: true
     email?: true
     password?: true
+    avatarPath?: true
     role?: true
-    quota?: true
-    usedSpace?: true
+    storageQuota?: true
+    usedQuota?: true
     createdAt?: true
     updatedAt?: true
   }
@@ -1172,9 +1199,10 @@ export namespace Prisma {
     name?: true
     email?: true
     password?: true
+    avatarPath?: true
     role?: true
-    quota?: true
-    usedSpace?: true
+    storageQuota?: true
+    usedQuota?: true
     createdAt?: true
     updatedAt?: true
     _all?: true
@@ -1271,9 +1299,10 @@ export namespace Prisma {
     name: string
     email: string
     password: string
+    avatarPath: string | null
     role: $Enums.Role
-    quota: number
-    usedSpace: number
+    storageQuota: number
+    usedQuota: number
     createdAt: Date
     updatedAt: Date
     _count: UserCountAggregateOutputType | null
@@ -1302,9 +1331,10 @@ export namespace Prisma {
     name?: boolean
     email?: boolean
     password?: boolean
+    avatarPath?: boolean
     role?: boolean
-    quota?: boolean
-    usedSpace?: boolean
+    storageQuota?: boolean
+    usedQuota?: boolean
     createdAt?: boolean
     updatedAt?: boolean
     files?: boolean | User$filesArgs<ExtArgs>
@@ -1316,9 +1346,23 @@ export namespace Prisma {
     name?: boolean
     email?: boolean
     password?: boolean
+    avatarPath?: boolean
     role?: boolean
-    quota?: boolean
-    usedSpace?: boolean
+    storageQuota?: boolean
+    usedQuota?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+  }, ExtArgs["result"]["user"]>
+
+  export type UserSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    name?: boolean
+    email?: boolean
+    password?: boolean
+    avatarPath?: boolean
+    role?: boolean
+    storageQuota?: boolean
+    usedQuota?: boolean
     createdAt?: boolean
     updatedAt?: boolean
   }, ExtArgs["result"]["user"]>
@@ -1328,18 +1372,21 @@ export namespace Prisma {
     name?: boolean
     email?: boolean
     password?: boolean
+    avatarPath?: boolean
     role?: boolean
-    quota?: boolean
-    usedSpace?: boolean
+    storageQuota?: boolean
+    usedQuota?: boolean
     createdAt?: boolean
     updatedAt?: boolean
   }
 
+  export type UserOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "name" | "email" | "password" | "avatarPath" | "role" | "storageQuota" | "usedQuota" | "createdAt" | "updatedAt", ExtArgs["result"]["user"]>
   export type UserInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     files?: boolean | User$filesArgs<ExtArgs>
     _count?: boolean | UserCountOutputTypeDefaultArgs<ExtArgs>
   }
   export type UserIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {}
+  export type UserIncludeUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {}
 
   export type $UserPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     name: "User"
@@ -1351,9 +1398,10 @@ export namespace Prisma {
       name: string
       email: string
       password: string
+      avatarPath: string | null
       role: $Enums.Role
-      quota: number
-      usedSpace: number
+      storageQuota: number
+      usedQuota: number
       createdAt: Date
       updatedAt: Date
     }, ExtArgs["result"]["user"]>
@@ -1362,12 +1410,12 @@ export namespace Prisma {
 
   type UserGetPayload<S extends boolean | null | undefined | UserDefaultArgs> = $Result.GetResult<Prisma.$UserPayload, S>
 
-  type UserCountArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = 
-    Omit<UserFindManyArgs, 'select' | 'include' | 'distinct'> & {
+  type UserCountArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> =
+    Omit<UserFindManyArgs, 'select' | 'include' | 'distinct' | 'omit'> & {
       select?: UserCountAggregateInputType | true
     }
 
-  export interface UserDelegate<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> {
+  export interface UserDelegate<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, ClientOptions = {}> {
     [K: symbol]: { types: Prisma.TypeMap<ExtArgs>['model']['User'], meta: { name: 'User' } }
     /**
      * Find zero or one User that matches the filter.
@@ -1380,10 +1428,10 @@ export namespace Prisma {
      *   }
      * })
      */
-    findUnique<T extends UserFindUniqueArgs>(args: SelectSubset<T, UserFindUniqueArgs<ExtArgs>>): Prisma__UserClient<$Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUnique"> | null, null, ExtArgs>
+    findUnique<T extends UserFindUniqueArgs>(args: SelectSubset<T, UserFindUniqueArgs<ExtArgs>>): Prisma__UserClient<$Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUnique", ClientOptions> | null, null, ExtArgs, ClientOptions>
 
     /**
-     * Find one User that matches the filter or throw an error with `error.code='P2025'` 
+     * Find one User that matches the filter or throw an error with `error.code='P2025'`
      * if no matches were found.
      * @param {UserFindUniqueOrThrowArgs} args - Arguments to find a User
      * @example
@@ -1394,7 +1442,7 @@ export namespace Prisma {
      *   }
      * })
      */
-    findUniqueOrThrow<T extends UserFindUniqueOrThrowArgs>(args: SelectSubset<T, UserFindUniqueOrThrowArgs<ExtArgs>>): Prisma__UserClient<$Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow">, never, ExtArgs>
+    findUniqueOrThrow<T extends UserFindUniqueOrThrowArgs>(args: SelectSubset<T, UserFindUniqueOrThrowArgs<ExtArgs>>): Prisma__UserClient<$Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow", ClientOptions>, never, ExtArgs, ClientOptions>
 
     /**
      * Find the first User that matches the filter.
@@ -1409,7 +1457,7 @@ export namespace Prisma {
      *   }
      * })
      */
-    findFirst<T extends UserFindFirstArgs>(args?: SelectSubset<T, UserFindFirstArgs<ExtArgs>>): Prisma__UserClient<$Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findFirst"> | null, null, ExtArgs>
+    findFirst<T extends UserFindFirstArgs>(args?: SelectSubset<T, UserFindFirstArgs<ExtArgs>>): Prisma__UserClient<$Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findFirst", ClientOptions> | null, null, ExtArgs, ClientOptions>
 
     /**
      * Find the first User that matches the filter or
@@ -1425,7 +1473,7 @@ export namespace Prisma {
      *   }
      * })
      */
-    findFirstOrThrow<T extends UserFindFirstOrThrowArgs>(args?: SelectSubset<T, UserFindFirstOrThrowArgs<ExtArgs>>): Prisma__UserClient<$Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findFirstOrThrow">, never, ExtArgs>
+    findFirstOrThrow<T extends UserFindFirstOrThrowArgs>(args?: SelectSubset<T, UserFindFirstOrThrowArgs<ExtArgs>>): Prisma__UserClient<$Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findFirstOrThrow", ClientOptions>, never, ExtArgs, ClientOptions>
 
     /**
      * Find zero or more Users that matches the filter.
@@ -1443,7 +1491,7 @@ export namespace Prisma {
      * const userWithIdOnly = await prisma.user.findMany({ select: { id: true } })
      * 
      */
-    findMany<T extends UserFindManyArgs>(args?: SelectSubset<T, UserFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findMany">>
+    findMany<T extends UserFindManyArgs>(args?: SelectSubset<T, UserFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findMany", ClientOptions>>
 
     /**
      * Create a User.
@@ -1457,7 +1505,7 @@ export namespace Prisma {
      * })
      * 
      */
-    create<T extends UserCreateArgs>(args: SelectSubset<T, UserCreateArgs<ExtArgs>>): Prisma__UserClient<$Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "create">, never, ExtArgs>
+    create<T extends UserCreateArgs>(args: SelectSubset<T, UserCreateArgs<ExtArgs>>): Prisma__UserClient<$Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "create", ClientOptions>, never, ExtArgs, ClientOptions>
 
     /**
      * Create many Users.
@@ -1485,7 +1533,7 @@ export namespace Prisma {
      * })
      * 
      * // Create many Users and only return the `id`
-     * const userWithIdOnly = await prisma.user.createManyAndReturn({ 
+     * const userWithIdOnly = await prisma.user.createManyAndReturn({
      *   select: { id: true },
      *   data: [
      *     // ... provide data here
@@ -1495,7 +1543,7 @@ export namespace Prisma {
      * Read more here: https://pris.ly/d/null-undefined
      * 
      */
-    createManyAndReturn<T extends UserCreateManyAndReturnArgs>(args?: SelectSubset<T, UserCreateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "createManyAndReturn">>
+    createManyAndReturn<T extends UserCreateManyAndReturnArgs>(args?: SelectSubset<T, UserCreateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "createManyAndReturn", ClientOptions>>
 
     /**
      * Delete a User.
@@ -1509,7 +1557,7 @@ export namespace Prisma {
      * })
      * 
      */
-    delete<T extends UserDeleteArgs>(args: SelectSubset<T, UserDeleteArgs<ExtArgs>>): Prisma__UserClient<$Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "delete">, never, ExtArgs>
+    delete<T extends UserDeleteArgs>(args: SelectSubset<T, UserDeleteArgs<ExtArgs>>): Prisma__UserClient<$Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "delete", ClientOptions>, never, ExtArgs, ClientOptions>
 
     /**
      * Update one User.
@@ -1526,7 +1574,7 @@ export namespace Prisma {
      * })
      * 
      */
-    update<T extends UserUpdateArgs>(args: SelectSubset<T, UserUpdateArgs<ExtArgs>>): Prisma__UserClient<$Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "update">, never, ExtArgs>
+    update<T extends UserUpdateArgs>(args: SelectSubset<T, UserUpdateArgs<ExtArgs>>): Prisma__UserClient<$Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "update", ClientOptions>, never, ExtArgs, ClientOptions>
 
     /**
      * Delete zero or more Users.
@@ -1562,6 +1610,36 @@ export namespace Prisma {
     updateMany<T extends UserUpdateManyArgs>(args: SelectSubset<T, UserUpdateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
 
     /**
+     * Update zero or more Users and returns the data updated in the database.
+     * @param {UserUpdateManyAndReturnArgs} args - Arguments to update many Users.
+     * @example
+     * // Update many Users
+     * const user = await prisma.user.updateManyAndReturn({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Update zero or more Users and only return the `id`
+     * const userWithIdOnly = await prisma.user.updateManyAndReturn({
+     *   select: { id: true },
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    updateManyAndReturn<T extends UserUpdateManyAndReturnArgs>(args: SelectSubset<T, UserUpdateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "updateManyAndReturn", ClientOptions>>
+
+    /**
      * Create or update one User.
      * @param {UserUpsertArgs} args - Arguments to update or create a User.
      * @example
@@ -1578,7 +1656,7 @@ export namespace Prisma {
      *   }
      * })
      */
-    upsert<T extends UserUpsertArgs>(args: SelectSubset<T, UserUpsertArgs<ExtArgs>>): Prisma__UserClient<$Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "upsert">, never, ExtArgs>
+    upsert<T extends UserUpsertArgs>(args: SelectSubset<T, UserUpsertArgs<ExtArgs>>): Prisma__UserClient<$Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "upsert", ClientOptions>, never, ExtArgs, ClientOptions>
 
 
     /**
@@ -1718,9 +1796,9 @@ export namespace Prisma {
    * Because we want to prevent naming conflicts as mentioned in
    * https://github.com/prisma/prisma-client-js/issues/707
    */
-  export interface Prisma__UserClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> extends Prisma.PrismaPromise<T> {
+  export interface Prisma__UserClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, ClientOptions = {}> extends Prisma.PrismaPromise<T> {
     readonly [Symbol.toStringTag]: "PrismaPromise"
-    files<T extends User$filesArgs<ExtArgs> = {}>(args?: Subset<T, User$filesArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$FilePayload<ExtArgs>, T, "findMany"> | Null>
+    files<T extends User$filesArgs<ExtArgs> = {}>(args?: Subset<T, User$filesArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$FilePayload<ExtArgs>, T, "findMany", ClientOptions> | Null>
     /**
      * Attaches callbacks for the resolution and/or rejection of the Promise.
      * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -1754,9 +1832,10 @@ export namespace Prisma {
     readonly name: FieldRef<"User", 'String'>
     readonly email: FieldRef<"User", 'String'>
     readonly password: FieldRef<"User", 'String'>
+    readonly avatarPath: FieldRef<"User", 'String'>
     readonly role: FieldRef<"User", 'Role'>
-    readonly quota: FieldRef<"User", 'Int'>
-    readonly usedSpace: FieldRef<"User", 'Int'>
+    readonly storageQuota: FieldRef<"User", 'Int'>
+    readonly usedQuota: FieldRef<"User", 'Int'>
     readonly createdAt: FieldRef<"User", 'DateTime'>
     readonly updatedAt: FieldRef<"User", 'DateTime'>
   }
@@ -1771,6 +1850,10 @@ export namespace Prisma {
      * Select specific fields to fetch from the User
      */
     select?: UserSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the User
+     */
+    omit?: UserOmit<ExtArgs> | null
     /**
      * Choose, which related nodes to fetch as well
      */
@@ -1790,6 +1873,10 @@ export namespace Prisma {
      */
     select?: UserSelect<ExtArgs> | null
     /**
+     * Omit specific fields from the User
+     */
+    omit?: UserOmit<ExtArgs> | null
+    /**
      * Choose, which related nodes to fetch as well
      */
     include?: UserInclude<ExtArgs> | null
@@ -1807,6 +1894,10 @@ export namespace Prisma {
      * Select specific fields to fetch from the User
      */
     select?: UserSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the User
+     */
+    omit?: UserOmit<ExtArgs> | null
     /**
      * Choose, which related nodes to fetch as well
      */
@@ -1856,6 +1947,10 @@ export namespace Prisma {
      */
     select?: UserSelect<ExtArgs> | null
     /**
+     * Omit specific fields from the User
+     */
+    omit?: UserOmit<ExtArgs> | null
+    /**
      * Choose, which related nodes to fetch as well
      */
     include?: UserInclude<ExtArgs> | null
@@ -1904,6 +1999,10 @@ export namespace Prisma {
      */
     select?: UserSelect<ExtArgs> | null
     /**
+     * Omit specific fields from the User
+     */
+    omit?: UserOmit<ExtArgs> | null
+    /**
      * Choose, which related nodes to fetch as well
      */
     include?: UserInclude<ExtArgs> | null
@@ -1947,6 +2046,10 @@ export namespace Prisma {
      */
     select?: UserSelect<ExtArgs> | null
     /**
+     * Omit specific fields from the User
+     */
+    omit?: UserOmit<ExtArgs> | null
+    /**
      * Choose, which related nodes to fetch as well
      */
     include?: UserInclude<ExtArgs> | null
@@ -1976,6 +2079,10 @@ export namespace Prisma {
      */
     select?: UserSelectCreateManyAndReturn<ExtArgs> | null
     /**
+     * Omit specific fields from the User
+     */
+    omit?: UserOmit<ExtArgs> | null
+    /**
      * The data used to create many Users.
      */
     data: UserCreateManyInput | UserCreateManyInput[]
@@ -1990,6 +2097,10 @@ export namespace Prisma {
      * Select specific fields to fetch from the User
      */
     select?: UserSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the User
+     */
+    omit?: UserOmit<ExtArgs> | null
     /**
      * Choose, which related nodes to fetch as well
      */
@@ -2019,6 +2130,28 @@ export namespace Prisma {
   }
 
   /**
+   * User updateManyAndReturn
+   */
+  export type UserUpdateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the User
+     */
+    select?: UserSelectUpdateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the User
+     */
+    omit?: UserOmit<ExtArgs> | null
+    /**
+     * The data used to update Users.
+     */
+    data: XOR<UserUpdateManyMutationInput, UserUncheckedUpdateManyInput>
+    /**
+     * Filter which Users to update
+     */
+    where?: UserWhereInput
+  }
+
+  /**
    * User upsert
    */
   export type UserUpsertArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
@@ -2026,6 +2159,10 @@ export namespace Prisma {
      * Select specific fields to fetch from the User
      */
     select?: UserSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the User
+     */
+    omit?: UserOmit<ExtArgs> | null
     /**
      * Choose, which related nodes to fetch as well
      */
@@ -2052,6 +2189,10 @@ export namespace Prisma {
      * Select specific fields to fetch from the User
      */
     select?: UserSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the User
+     */
+    omit?: UserOmit<ExtArgs> | null
     /**
      * Choose, which related nodes to fetch as well
      */
@@ -2081,6 +2222,10 @@ export namespace Prisma {
      */
     select?: FileSelect<ExtArgs> | null
     /**
+     * Omit specific fields from the File
+     */
+    omit?: FileOmit<ExtArgs> | null
+    /**
      * Choose, which related nodes to fetch as well
      */
     include?: FileInclude<ExtArgs> | null
@@ -2101,6 +2246,10 @@ export namespace Prisma {
      */
     select?: UserSelect<ExtArgs> | null
     /**
+     * Omit specific fields from the User
+     */
+    omit?: UserOmit<ExtArgs> | null
+    /**
      * Choose, which related nodes to fetch as well
      */
     include?: UserInclude<ExtArgs> | null
@@ -2120,11 +2269,11 @@ export namespace Prisma {
   }
 
   export type InviteAvgAggregateOutputType = {
-    quota: number | null
+    storageQuota: number | null
   }
 
   export type InviteSumAggregateOutputType = {
-    quota: number | null
+    storageQuota: number | null
   }
 
   export type InviteMinAggregateOutputType = {
@@ -2132,7 +2281,7 @@ export namespace Prisma {
     email: string | null
     token: string | null
     role: $Enums.Role | null
-    quota: number | null
+    storageQuota: number | null
     createdAt: Date | null
   }
 
@@ -2141,7 +2290,7 @@ export namespace Prisma {
     email: string | null
     token: string | null
     role: $Enums.Role | null
-    quota: number | null
+    storageQuota: number | null
     createdAt: Date | null
   }
 
@@ -2150,18 +2299,18 @@ export namespace Prisma {
     email: number
     token: number
     role: number
-    quota: number
+    storageQuota: number
     createdAt: number
     _all: number
   }
 
 
   export type InviteAvgAggregateInputType = {
-    quota?: true
+    storageQuota?: true
   }
 
   export type InviteSumAggregateInputType = {
-    quota?: true
+    storageQuota?: true
   }
 
   export type InviteMinAggregateInputType = {
@@ -2169,7 +2318,7 @@ export namespace Prisma {
     email?: true
     token?: true
     role?: true
-    quota?: true
+    storageQuota?: true
     createdAt?: true
   }
 
@@ -2178,7 +2327,7 @@ export namespace Prisma {
     email?: true
     token?: true
     role?: true
-    quota?: true
+    storageQuota?: true
     createdAt?: true
   }
 
@@ -2187,7 +2336,7 @@ export namespace Prisma {
     email?: true
     token?: true
     role?: true
-    quota?: true
+    storageQuota?: true
     createdAt?: true
     _all?: true
   }
@@ -2283,7 +2432,7 @@ export namespace Prisma {
     email: string
     token: string
     role: $Enums.Role
-    quota: number | null
+    storageQuota: number
     createdAt: Date
     _count: InviteCountAggregateOutputType | null
     _avg: InviteAvgAggregateOutputType | null
@@ -2311,7 +2460,7 @@ export namespace Prisma {
     email?: boolean
     token?: boolean
     role?: boolean
-    quota?: boolean
+    storageQuota?: boolean
     createdAt?: boolean
   }, ExtArgs["result"]["invite"]>
 
@@ -2320,7 +2469,16 @@ export namespace Prisma {
     email?: boolean
     token?: boolean
     role?: boolean
-    quota?: boolean
+    storageQuota?: boolean
+    createdAt?: boolean
+  }, ExtArgs["result"]["invite"]>
+
+  export type InviteSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    email?: boolean
+    token?: boolean
+    role?: boolean
+    storageQuota?: boolean
     createdAt?: boolean
   }, ExtArgs["result"]["invite"]>
 
@@ -2329,10 +2487,11 @@ export namespace Prisma {
     email?: boolean
     token?: boolean
     role?: boolean
-    quota?: boolean
+    storageQuota?: boolean
     createdAt?: boolean
   }
 
+  export type InviteOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "email" | "token" | "role" | "storageQuota" | "createdAt", ExtArgs["result"]["invite"]>
 
   export type $InvitePayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     name: "Invite"
@@ -2342,7 +2501,7 @@ export namespace Prisma {
       email: string
       token: string
       role: $Enums.Role
-      quota: number | null
+      storageQuota: number
       createdAt: Date
     }, ExtArgs["result"]["invite"]>
     composites: {}
@@ -2350,12 +2509,12 @@ export namespace Prisma {
 
   type InviteGetPayload<S extends boolean | null | undefined | InviteDefaultArgs> = $Result.GetResult<Prisma.$InvitePayload, S>
 
-  type InviteCountArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = 
-    Omit<InviteFindManyArgs, 'select' | 'include' | 'distinct'> & {
+  type InviteCountArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> =
+    Omit<InviteFindManyArgs, 'select' | 'include' | 'distinct' | 'omit'> & {
       select?: InviteCountAggregateInputType | true
     }
 
-  export interface InviteDelegate<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> {
+  export interface InviteDelegate<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, ClientOptions = {}> {
     [K: symbol]: { types: Prisma.TypeMap<ExtArgs>['model']['Invite'], meta: { name: 'Invite' } }
     /**
      * Find zero or one Invite that matches the filter.
@@ -2368,10 +2527,10 @@ export namespace Prisma {
      *   }
      * })
      */
-    findUnique<T extends InviteFindUniqueArgs>(args: SelectSubset<T, InviteFindUniqueArgs<ExtArgs>>): Prisma__InviteClient<$Result.GetResult<Prisma.$InvitePayload<ExtArgs>, T, "findUnique"> | null, null, ExtArgs>
+    findUnique<T extends InviteFindUniqueArgs>(args: SelectSubset<T, InviteFindUniqueArgs<ExtArgs>>): Prisma__InviteClient<$Result.GetResult<Prisma.$InvitePayload<ExtArgs>, T, "findUnique", ClientOptions> | null, null, ExtArgs, ClientOptions>
 
     /**
-     * Find one Invite that matches the filter or throw an error with `error.code='P2025'` 
+     * Find one Invite that matches the filter or throw an error with `error.code='P2025'`
      * if no matches were found.
      * @param {InviteFindUniqueOrThrowArgs} args - Arguments to find a Invite
      * @example
@@ -2382,7 +2541,7 @@ export namespace Prisma {
      *   }
      * })
      */
-    findUniqueOrThrow<T extends InviteFindUniqueOrThrowArgs>(args: SelectSubset<T, InviteFindUniqueOrThrowArgs<ExtArgs>>): Prisma__InviteClient<$Result.GetResult<Prisma.$InvitePayload<ExtArgs>, T, "findUniqueOrThrow">, never, ExtArgs>
+    findUniqueOrThrow<T extends InviteFindUniqueOrThrowArgs>(args: SelectSubset<T, InviteFindUniqueOrThrowArgs<ExtArgs>>): Prisma__InviteClient<$Result.GetResult<Prisma.$InvitePayload<ExtArgs>, T, "findUniqueOrThrow", ClientOptions>, never, ExtArgs, ClientOptions>
 
     /**
      * Find the first Invite that matches the filter.
@@ -2397,7 +2556,7 @@ export namespace Prisma {
      *   }
      * })
      */
-    findFirst<T extends InviteFindFirstArgs>(args?: SelectSubset<T, InviteFindFirstArgs<ExtArgs>>): Prisma__InviteClient<$Result.GetResult<Prisma.$InvitePayload<ExtArgs>, T, "findFirst"> | null, null, ExtArgs>
+    findFirst<T extends InviteFindFirstArgs>(args?: SelectSubset<T, InviteFindFirstArgs<ExtArgs>>): Prisma__InviteClient<$Result.GetResult<Prisma.$InvitePayload<ExtArgs>, T, "findFirst", ClientOptions> | null, null, ExtArgs, ClientOptions>
 
     /**
      * Find the first Invite that matches the filter or
@@ -2413,7 +2572,7 @@ export namespace Prisma {
      *   }
      * })
      */
-    findFirstOrThrow<T extends InviteFindFirstOrThrowArgs>(args?: SelectSubset<T, InviteFindFirstOrThrowArgs<ExtArgs>>): Prisma__InviteClient<$Result.GetResult<Prisma.$InvitePayload<ExtArgs>, T, "findFirstOrThrow">, never, ExtArgs>
+    findFirstOrThrow<T extends InviteFindFirstOrThrowArgs>(args?: SelectSubset<T, InviteFindFirstOrThrowArgs<ExtArgs>>): Prisma__InviteClient<$Result.GetResult<Prisma.$InvitePayload<ExtArgs>, T, "findFirstOrThrow", ClientOptions>, never, ExtArgs, ClientOptions>
 
     /**
      * Find zero or more Invites that matches the filter.
@@ -2431,7 +2590,7 @@ export namespace Prisma {
      * const inviteWithIdOnly = await prisma.invite.findMany({ select: { id: true } })
      * 
      */
-    findMany<T extends InviteFindManyArgs>(args?: SelectSubset<T, InviteFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$InvitePayload<ExtArgs>, T, "findMany">>
+    findMany<T extends InviteFindManyArgs>(args?: SelectSubset<T, InviteFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$InvitePayload<ExtArgs>, T, "findMany", ClientOptions>>
 
     /**
      * Create a Invite.
@@ -2445,7 +2604,7 @@ export namespace Prisma {
      * })
      * 
      */
-    create<T extends InviteCreateArgs>(args: SelectSubset<T, InviteCreateArgs<ExtArgs>>): Prisma__InviteClient<$Result.GetResult<Prisma.$InvitePayload<ExtArgs>, T, "create">, never, ExtArgs>
+    create<T extends InviteCreateArgs>(args: SelectSubset<T, InviteCreateArgs<ExtArgs>>): Prisma__InviteClient<$Result.GetResult<Prisma.$InvitePayload<ExtArgs>, T, "create", ClientOptions>, never, ExtArgs, ClientOptions>
 
     /**
      * Create many Invites.
@@ -2473,7 +2632,7 @@ export namespace Prisma {
      * })
      * 
      * // Create many Invites and only return the `id`
-     * const inviteWithIdOnly = await prisma.invite.createManyAndReturn({ 
+     * const inviteWithIdOnly = await prisma.invite.createManyAndReturn({
      *   select: { id: true },
      *   data: [
      *     // ... provide data here
@@ -2483,7 +2642,7 @@ export namespace Prisma {
      * Read more here: https://pris.ly/d/null-undefined
      * 
      */
-    createManyAndReturn<T extends InviteCreateManyAndReturnArgs>(args?: SelectSubset<T, InviteCreateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$InvitePayload<ExtArgs>, T, "createManyAndReturn">>
+    createManyAndReturn<T extends InviteCreateManyAndReturnArgs>(args?: SelectSubset<T, InviteCreateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$InvitePayload<ExtArgs>, T, "createManyAndReturn", ClientOptions>>
 
     /**
      * Delete a Invite.
@@ -2497,7 +2656,7 @@ export namespace Prisma {
      * })
      * 
      */
-    delete<T extends InviteDeleteArgs>(args: SelectSubset<T, InviteDeleteArgs<ExtArgs>>): Prisma__InviteClient<$Result.GetResult<Prisma.$InvitePayload<ExtArgs>, T, "delete">, never, ExtArgs>
+    delete<T extends InviteDeleteArgs>(args: SelectSubset<T, InviteDeleteArgs<ExtArgs>>): Prisma__InviteClient<$Result.GetResult<Prisma.$InvitePayload<ExtArgs>, T, "delete", ClientOptions>, never, ExtArgs, ClientOptions>
 
     /**
      * Update one Invite.
@@ -2514,7 +2673,7 @@ export namespace Prisma {
      * })
      * 
      */
-    update<T extends InviteUpdateArgs>(args: SelectSubset<T, InviteUpdateArgs<ExtArgs>>): Prisma__InviteClient<$Result.GetResult<Prisma.$InvitePayload<ExtArgs>, T, "update">, never, ExtArgs>
+    update<T extends InviteUpdateArgs>(args: SelectSubset<T, InviteUpdateArgs<ExtArgs>>): Prisma__InviteClient<$Result.GetResult<Prisma.$InvitePayload<ExtArgs>, T, "update", ClientOptions>, never, ExtArgs, ClientOptions>
 
     /**
      * Delete zero or more Invites.
@@ -2550,6 +2709,36 @@ export namespace Prisma {
     updateMany<T extends InviteUpdateManyArgs>(args: SelectSubset<T, InviteUpdateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
 
     /**
+     * Update zero or more Invites and returns the data updated in the database.
+     * @param {InviteUpdateManyAndReturnArgs} args - Arguments to update many Invites.
+     * @example
+     * // Update many Invites
+     * const invite = await prisma.invite.updateManyAndReturn({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Update zero or more Invites and only return the `id`
+     * const inviteWithIdOnly = await prisma.invite.updateManyAndReturn({
+     *   select: { id: true },
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    updateManyAndReturn<T extends InviteUpdateManyAndReturnArgs>(args: SelectSubset<T, InviteUpdateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$InvitePayload<ExtArgs>, T, "updateManyAndReturn", ClientOptions>>
+
+    /**
      * Create or update one Invite.
      * @param {InviteUpsertArgs} args - Arguments to update or create a Invite.
      * @example
@@ -2566,7 +2755,7 @@ export namespace Prisma {
      *   }
      * })
      */
-    upsert<T extends InviteUpsertArgs>(args: SelectSubset<T, InviteUpsertArgs<ExtArgs>>): Prisma__InviteClient<$Result.GetResult<Prisma.$InvitePayload<ExtArgs>, T, "upsert">, never, ExtArgs>
+    upsert<T extends InviteUpsertArgs>(args: SelectSubset<T, InviteUpsertArgs<ExtArgs>>): Prisma__InviteClient<$Result.GetResult<Prisma.$InvitePayload<ExtArgs>, T, "upsert", ClientOptions>, never, ExtArgs, ClientOptions>
 
 
     /**
@@ -2706,7 +2895,7 @@ export namespace Prisma {
    * Because we want to prevent naming conflicts as mentioned in
    * https://github.com/prisma/prisma-client-js/issues/707
    */
-  export interface Prisma__InviteClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> extends Prisma.PrismaPromise<T> {
+  export interface Prisma__InviteClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, ClientOptions = {}> extends Prisma.PrismaPromise<T> {
     readonly [Symbol.toStringTag]: "PrismaPromise"
     /**
      * Attaches callbacks for the resolution and/or rejection of the Promise.
@@ -2741,7 +2930,7 @@ export namespace Prisma {
     readonly email: FieldRef<"Invite", 'String'>
     readonly token: FieldRef<"Invite", 'String'>
     readonly role: FieldRef<"Invite", 'Role'>
-    readonly quota: FieldRef<"Invite", 'Int'>
+    readonly storageQuota: FieldRef<"Invite", 'Int'>
     readonly createdAt: FieldRef<"Invite", 'DateTime'>
   }
     
@@ -2755,6 +2944,10 @@ export namespace Prisma {
      * Select specific fields to fetch from the Invite
      */
     select?: InviteSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Invite
+     */
+    omit?: InviteOmit<ExtArgs> | null
     /**
      * Filter, which Invite to fetch.
      */
@@ -2770,6 +2963,10 @@ export namespace Prisma {
      */
     select?: InviteSelect<ExtArgs> | null
     /**
+     * Omit specific fields from the Invite
+     */
+    omit?: InviteOmit<ExtArgs> | null
+    /**
      * Filter, which Invite to fetch.
      */
     where: InviteWhereUniqueInput
@@ -2783,6 +2980,10 @@ export namespace Prisma {
      * Select specific fields to fetch from the Invite
      */
     select?: InviteSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Invite
+     */
+    omit?: InviteOmit<ExtArgs> | null
     /**
      * Filter, which Invite to fetch.
      */
@@ -2828,6 +3029,10 @@ export namespace Prisma {
      */
     select?: InviteSelect<ExtArgs> | null
     /**
+     * Omit specific fields from the Invite
+     */
+    omit?: InviteOmit<ExtArgs> | null
+    /**
      * Filter, which Invite to fetch.
      */
     where?: InviteWhereInput
@@ -2872,6 +3077,10 @@ export namespace Prisma {
      */
     select?: InviteSelect<ExtArgs> | null
     /**
+     * Omit specific fields from the Invite
+     */
+    omit?: InviteOmit<ExtArgs> | null
+    /**
      * Filter, which Invites to fetch.
      */
     where?: InviteWhereInput
@@ -2911,6 +3120,10 @@ export namespace Prisma {
      */
     select?: InviteSelect<ExtArgs> | null
     /**
+     * Omit specific fields from the Invite
+     */
+    omit?: InviteOmit<ExtArgs> | null
+    /**
      * The data needed to create a Invite.
      */
     data: XOR<InviteCreateInput, InviteUncheckedCreateInput>
@@ -2936,6 +3149,10 @@ export namespace Prisma {
      */
     select?: InviteSelectCreateManyAndReturn<ExtArgs> | null
     /**
+     * Omit specific fields from the Invite
+     */
+    omit?: InviteOmit<ExtArgs> | null
+    /**
      * The data used to create many Invites.
      */
     data: InviteCreateManyInput | InviteCreateManyInput[]
@@ -2950,6 +3167,10 @@ export namespace Prisma {
      * Select specific fields to fetch from the Invite
      */
     select?: InviteSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Invite
+     */
+    omit?: InviteOmit<ExtArgs> | null
     /**
      * The data needed to update a Invite.
      */
@@ -2975,6 +3196,28 @@ export namespace Prisma {
   }
 
   /**
+   * Invite updateManyAndReturn
+   */
+  export type InviteUpdateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Invite
+     */
+    select?: InviteSelectUpdateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the Invite
+     */
+    omit?: InviteOmit<ExtArgs> | null
+    /**
+     * The data used to update Invites.
+     */
+    data: XOR<InviteUpdateManyMutationInput, InviteUncheckedUpdateManyInput>
+    /**
+     * Filter which Invites to update
+     */
+    where?: InviteWhereInput
+  }
+
+  /**
    * Invite upsert
    */
   export type InviteUpsertArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
@@ -2982,6 +3225,10 @@ export namespace Prisma {
      * Select specific fields to fetch from the Invite
      */
     select?: InviteSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Invite
+     */
+    omit?: InviteOmit<ExtArgs> | null
     /**
      * The filter to search for the Invite to update in case it exists.
      */
@@ -3004,6 +3251,10 @@ export namespace Prisma {
      * Select specific fields to fetch from the Invite
      */
     select?: InviteSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Invite
+     */
+    omit?: InviteOmit<ExtArgs> | null
     /**
      * Filter which Invite to delete.
      */
@@ -3028,6 +3279,10 @@ export namespace Prisma {
      * Select specific fields to fetch from the Invite
      */
     select?: InviteSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Invite
+     */
+    omit?: InviteOmit<ExtArgs> | null
   }
 
 
@@ -3059,8 +3314,8 @@ export namespace Prisma {
     size: number | null
     path: string | null
     thumbnail: string | null
-    parentId: string | null
-    isFolder: boolean | null
+    directoryId: string | null
+    isDirectory: boolean | null
     createdAt: Date | null
     updatedAt: Date | null
   }
@@ -3073,8 +3328,8 @@ export namespace Prisma {
     size: number | null
     path: string | null
     thumbnail: string | null
-    parentId: string | null
-    isFolder: boolean | null
+    directoryId: string | null
+    isDirectory: boolean | null
     createdAt: Date | null
     updatedAt: Date | null
   }
@@ -3087,8 +3342,8 @@ export namespace Prisma {
     size: number
     path: number
     thumbnail: number
-    parentId: number
-    isFolder: number
+    directoryId: number
+    isDirectory: number
     createdAt: number
     updatedAt: number
     _all: number
@@ -3111,8 +3366,8 @@ export namespace Prisma {
     size?: true
     path?: true
     thumbnail?: true
-    parentId?: true
-    isFolder?: true
+    directoryId?: true
+    isDirectory?: true
     createdAt?: true
     updatedAt?: true
   }
@@ -3125,8 +3380,8 @@ export namespace Prisma {
     size?: true
     path?: true
     thumbnail?: true
-    parentId?: true
-    isFolder?: true
+    directoryId?: true
+    isDirectory?: true
     createdAt?: true
     updatedAt?: true
   }
@@ -3139,8 +3394,8 @@ export namespace Prisma {
     size?: true
     path?: true
     thumbnail?: true
-    parentId?: true
-    isFolder?: true
+    directoryId?: true
+    isDirectory?: true
     createdAt?: true
     updatedAt?: true
     _all?: true
@@ -3240,8 +3495,8 @@ export namespace Prisma {
     size: number
     path: string
     thumbnail: string | null
-    parentId: string | null
-    isFolder: boolean
+    directoryId: string | null
+    isDirectory: boolean
     createdAt: Date
     updatedAt: Date
     _count: FileCountAggregateOutputType | null
@@ -3273,8 +3528,8 @@ export namespace Prisma {
     size?: boolean
     path?: boolean
     thumbnail?: boolean
-    parentId?: boolean
-    isFolder?: boolean
+    directoryId?: boolean
+    isDirectory?: boolean
     createdAt?: boolean
     updatedAt?: boolean
     user?: boolean | UserDefaultArgs<ExtArgs>
@@ -3288,8 +3543,23 @@ export namespace Prisma {
     size?: boolean
     path?: boolean
     thumbnail?: boolean
-    parentId?: boolean
-    isFolder?: boolean
+    directoryId?: boolean
+    isDirectory?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+    user?: boolean | UserDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["file"]>
+
+  export type FileSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    userId?: boolean
+    name?: boolean
+    mimeType?: boolean
+    size?: boolean
+    path?: boolean
+    thumbnail?: boolean
+    directoryId?: boolean
+    isDirectory?: boolean
     createdAt?: boolean
     updatedAt?: boolean
     user?: boolean | UserDefaultArgs<ExtArgs>
@@ -3303,16 +3573,20 @@ export namespace Prisma {
     size?: boolean
     path?: boolean
     thumbnail?: boolean
-    parentId?: boolean
-    isFolder?: boolean
+    directoryId?: boolean
+    isDirectory?: boolean
     createdAt?: boolean
     updatedAt?: boolean
   }
 
+  export type FileOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "userId" | "name" | "mimeType" | "size" | "path" | "thumbnail" | "directoryId" | "isDirectory" | "createdAt" | "updatedAt", ExtArgs["result"]["file"]>
   export type FileInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     user?: boolean | UserDefaultArgs<ExtArgs>
   }
   export type FileIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    user?: boolean | UserDefaultArgs<ExtArgs>
+  }
+  export type FileIncludeUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     user?: boolean | UserDefaultArgs<ExtArgs>
   }
 
@@ -3329,8 +3603,8 @@ export namespace Prisma {
       size: number
       path: string
       thumbnail: string | null
-      parentId: string | null
-      isFolder: boolean
+      directoryId: string | null
+      isDirectory: boolean
       createdAt: Date
       updatedAt: Date
     }, ExtArgs["result"]["file"]>
@@ -3339,12 +3613,12 @@ export namespace Prisma {
 
   type FileGetPayload<S extends boolean | null | undefined | FileDefaultArgs> = $Result.GetResult<Prisma.$FilePayload, S>
 
-  type FileCountArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = 
-    Omit<FileFindManyArgs, 'select' | 'include' | 'distinct'> & {
+  type FileCountArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> =
+    Omit<FileFindManyArgs, 'select' | 'include' | 'distinct' | 'omit'> & {
       select?: FileCountAggregateInputType | true
     }
 
-  export interface FileDelegate<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> {
+  export interface FileDelegate<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, ClientOptions = {}> {
     [K: symbol]: { types: Prisma.TypeMap<ExtArgs>['model']['File'], meta: { name: 'File' } }
     /**
      * Find zero or one File that matches the filter.
@@ -3357,10 +3631,10 @@ export namespace Prisma {
      *   }
      * })
      */
-    findUnique<T extends FileFindUniqueArgs>(args: SelectSubset<T, FileFindUniqueArgs<ExtArgs>>): Prisma__FileClient<$Result.GetResult<Prisma.$FilePayload<ExtArgs>, T, "findUnique"> | null, null, ExtArgs>
+    findUnique<T extends FileFindUniqueArgs>(args: SelectSubset<T, FileFindUniqueArgs<ExtArgs>>): Prisma__FileClient<$Result.GetResult<Prisma.$FilePayload<ExtArgs>, T, "findUnique", ClientOptions> | null, null, ExtArgs, ClientOptions>
 
     /**
-     * Find one File that matches the filter or throw an error with `error.code='P2025'` 
+     * Find one File that matches the filter or throw an error with `error.code='P2025'`
      * if no matches were found.
      * @param {FileFindUniqueOrThrowArgs} args - Arguments to find a File
      * @example
@@ -3371,7 +3645,7 @@ export namespace Prisma {
      *   }
      * })
      */
-    findUniqueOrThrow<T extends FileFindUniqueOrThrowArgs>(args: SelectSubset<T, FileFindUniqueOrThrowArgs<ExtArgs>>): Prisma__FileClient<$Result.GetResult<Prisma.$FilePayload<ExtArgs>, T, "findUniqueOrThrow">, never, ExtArgs>
+    findUniqueOrThrow<T extends FileFindUniqueOrThrowArgs>(args: SelectSubset<T, FileFindUniqueOrThrowArgs<ExtArgs>>): Prisma__FileClient<$Result.GetResult<Prisma.$FilePayload<ExtArgs>, T, "findUniqueOrThrow", ClientOptions>, never, ExtArgs, ClientOptions>
 
     /**
      * Find the first File that matches the filter.
@@ -3386,7 +3660,7 @@ export namespace Prisma {
      *   }
      * })
      */
-    findFirst<T extends FileFindFirstArgs>(args?: SelectSubset<T, FileFindFirstArgs<ExtArgs>>): Prisma__FileClient<$Result.GetResult<Prisma.$FilePayload<ExtArgs>, T, "findFirst"> | null, null, ExtArgs>
+    findFirst<T extends FileFindFirstArgs>(args?: SelectSubset<T, FileFindFirstArgs<ExtArgs>>): Prisma__FileClient<$Result.GetResult<Prisma.$FilePayload<ExtArgs>, T, "findFirst", ClientOptions> | null, null, ExtArgs, ClientOptions>
 
     /**
      * Find the first File that matches the filter or
@@ -3402,7 +3676,7 @@ export namespace Prisma {
      *   }
      * })
      */
-    findFirstOrThrow<T extends FileFindFirstOrThrowArgs>(args?: SelectSubset<T, FileFindFirstOrThrowArgs<ExtArgs>>): Prisma__FileClient<$Result.GetResult<Prisma.$FilePayload<ExtArgs>, T, "findFirstOrThrow">, never, ExtArgs>
+    findFirstOrThrow<T extends FileFindFirstOrThrowArgs>(args?: SelectSubset<T, FileFindFirstOrThrowArgs<ExtArgs>>): Prisma__FileClient<$Result.GetResult<Prisma.$FilePayload<ExtArgs>, T, "findFirstOrThrow", ClientOptions>, never, ExtArgs, ClientOptions>
 
     /**
      * Find zero or more Files that matches the filter.
@@ -3420,7 +3694,7 @@ export namespace Prisma {
      * const fileWithIdOnly = await prisma.file.findMany({ select: { id: true } })
      * 
      */
-    findMany<T extends FileFindManyArgs>(args?: SelectSubset<T, FileFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$FilePayload<ExtArgs>, T, "findMany">>
+    findMany<T extends FileFindManyArgs>(args?: SelectSubset<T, FileFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$FilePayload<ExtArgs>, T, "findMany", ClientOptions>>
 
     /**
      * Create a File.
@@ -3434,7 +3708,7 @@ export namespace Prisma {
      * })
      * 
      */
-    create<T extends FileCreateArgs>(args: SelectSubset<T, FileCreateArgs<ExtArgs>>): Prisma__FileClient<$Result.GetResult<Prisma.$FilePayload<ExtArgs>, T, "create">, never, ExtArgs>
+    create<T extends FileCreateArgs>(args: SelectSubset<T, FileCreateArgs<ExtArgs>>): Prisma__FileClient<$Result.GetResult<Prisma.$FilePayload<ExtArgs>, T, "create", ClientOptions>, never, ExtArgs, ClientOptions>
 
     /**
      * Create many Files.
@@ -3462,7 +3736,7 @@ export namespace Prisma {
      * })
      * 
      * // Create many Files and only return the `id`
-     * const fileWithIdOnly = await prisma.file.createManyAndReturn({ 
+     * const fileWithIdOnly = await prisma.file.createManyAndReturn({
      *   select: { id: true },
      *   data: [
      *     // ... provide data here
@@ -3472,7 +3746,7 @@ export namespace Prisma {
      * Read more here: https://pris.ly/d/null-undefined
      * 
      */
-    createManyAndReturn<T extends FileCreateManyAndReturnArgs>(args?: SelectSubset<T, FileCreateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$FilePayload<ExtArgs>, T, "createManyAndReturn">>
+    createManyAndReturn<T extends FileCreateManyAndReturnArgs>(args?: SelectSubset<T, FileCreateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$FilePayload<ExtArgs>, T, "createManyAndReturn", ClientOptions>>
 
     /**
      * Delete a File.
@@ -3486,7 +3760,7 @@ export namespace Prisma {
      * })
      * 
      */
-    delete<T extends FileDeleteArgs>(args: SelectSubset<T, FileDeleteArgs<ExtArgs>>): Prisma__FileClient<$Result.GetResult<Prisma.$FilePayload<ExtArgs>, T, "delete">, never, ExtArgs>
+    delete<T extends FileDeleteArgs>(args: SelectSubset<T, FileDeleteArgs<ExtArgs>>): Prisma__FileClient<$Result.GetResult<Prisma.$FilePayload<ExtArgs>, T, "delete", ClientOptions>, never, ExtArgs, ClientOptions>
 
     /**
      * Update one File.
@@ -3503,7 +3777,7 @@ export namespace Prisma {
      * })
      * 
      */
-    update<T extends FileUpdateArgs>(args: SelectSubset<T, FileUpdateArgs<ExtArgs>>): Prisma__FileClient<$Result.GetResult<Prisma.$FilePayload<ExtArgs>, T, "update">, never, ExtArgs>
+    update<T extends FileUpdateArgs>(args: SelectSubset<T, FileUpdateArgs<ExtArgs>>): Prisma__FileClient<$Result.GetResult<Prisma.$FilePayload<ExtArgs>, T, "update", ClientOptions>, never, ExtArgs, ClientOptions>
 
     /**
      * Delete zero or more Files.
@@ -3539,6 +3813,36 @@ export namespace Prisma {
     updateMany<T extends FileUpdateManyArgs>(args: SelectSubset<T, FileUpdateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
 
     /**
+     * Update zero or more Files and returns the data updated in the database.
+     * @param {FileUpdateManyAndReturnArgs} args - Arguments to update many Files.
+     * @example
+     * // Update many Files
+     * const file = await prisma.file.updateManyAndReturn({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Update zero or more Files and only return the `id`
+     * const fileWithIdOnly = await prisma.file.updateManyAndReturn({
+     *   select: { id: true },
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    updateManyAndReturn<T extends FileUpdateManyAndReturnArgs>(args: SelectSubset<T, FileUpdateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$FilePayload<ExtArgs>, T, "updateManyAndReturn", ClientOptions>>
+
+    /**
      * Create or update one File.
      * @param {FileUpsertArgs} args - Arguments to update or create a File.
      * @example
@@ -3555,7 +3859,7 @@ export namespace Prisma {
      *   }
      * })
      */
-    upsert<T extends FileUpsertArgs>(args: SelectSubset<T, FileUpsertArgs<ExtArgs>>): Prisma__FileClient<$Result.GetResult<Prisma.$FilePayload<ExtArgs>, T, "upsert">, never, ExtArgs>
+    upsert<T extends FileUpsertArgs>(args: SelectSubset<T, FileUpsertArgs<ExtArgs>>): Prisma__FileClient<$Result.GetResult<Prisma.$FilePayload<ExtArgs>, T, "upsert", ClientOptions>, never, ExtArgs, ClientOptions>
 
 
     /**
@@ -3695,9 +3999,9 @@ export namespace Prisma {
    * Because we want to prevent naming conflicts as mentioned in
    * https://github.com/prisma/prisma-client-js/issues/707
    */
-  export interface Prisma__FileClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> extends Prisma.PrismaPromise<T> {
+  export interface Prisma__FileClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, ClientOptions = {}> extends Prisma.PrismaPromise<T> {
     readonly [Symbol.toStringTag]: "PrismaPromise"
-    user<T extends UserDefaultArgs<ExtArgs> = {}>(args?: Subset<T, UserDefaultArgs<ExtArgs>>): Prisma__UserClient<$Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow"> | Null, Null, ExtArgs>
+    user<T extends UserDefaultArgs<ExtArgs> = {}>(args?: Subset<T, UserDefaultArgs<ExtArgs>>): Prisma__UserClient<$Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow", ClientOptions> | Null, Null, ExtArgs, ClientOptions>
     /**
      * Attaches callbacks for the resolution and/or rejection of the Promise.
      * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -3734,8 +4038,8 @@ export namespace Prisma {
     readonly size: FieldRef<"File", 'Int'>
     readonly path: FieldRef<"File", 'String'>
     readonly thumbnail: FieldRef<"File", 'String'>
-    readonly parentId: FieldRef<"File", 'String'>
-    readonly isFolder: FieldRef<"File", 'Boolean'>
+    readonly directoryId: FieldRef<"File", 'String'>
+    readonly isDirectory: FieldRef<"File", 'Boolean'>
     readonly createdAt: FieldRef<"File", 'DateTime'>
     readonly updatedAt: FieldRef<"File", 'DateTime'>
   }
@@ -3750,6 +4054,10 @@ export namespace Prisma {
      * Select specific fields to fetch from the File
      */
     select?: FileSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the File
+     */
+    omit?: FileOmit<ExtArgs> | null
     /**
      * Choose, which related nodes to fetch as well
      */
@@ -3769,6 +4077,10 @@ export namespace Prisma {
      */
     select?: FileSelect<ExtArgs> | null
     /**
+     * Omit specific fields from the File
+     */
+    omit?: FileOmit<ExtArgs> | null
+    /**
      * Choose, which related nodes to fetch as well
      */
     include?: FileInclude<ExtArgs> | null
@@ -3786,6 +4098,10 @@ export namespace Prisma {
      * Select specific fields to fetch from the File
      */
     select?: FileSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the File
+     */
+    omit?: FileOmit<ExtArgs> | null
     /**
      * Choose, which related nodes to fetch as well
      */
@@ -3835,6 +4151,10 @@ export namespace Prisma {
      */
     select?: FileSelect<ExtArgs> | null
     /**
+     * Omit specific fields from the File
+     */
+    omit?: FileOmit<ExtArgs> | null
+    /**
      * Choose, which related nodes to fetch as well
      */
     include?: FileInclude<ExtArgs> | null
@@ -3883,6 +4203,10 @@ export namespace Prisma {
      */
     select?: FileSelect<ExtArgs> | null
     /**
+     * Omit specific fields from the File
+     */
+    omit?: FileOmit<ExtArgs> | null
+    /**
      * Choose, which related nodes to fetch as well
      */
     include?: FileInclude<ExtArgs> | null
@@ -3926,6 +4250,10 @@ export namespace Prisma {
      */
     select?: FileSelect<ExtArgs> | null
     /**
+     * Omit specific fields from the File
+     */
+    omit?: FileOmit<ExtArgs> | null
+    /**
      * Choose, which related nodes to fetch as well
      */
     include?: FileInclude<ExtArgs> | null
@@ -3955,6 +4283,10 @@ export namespace Prisma {
      */
     select?: FileSelectCreateManyAndReturn<ExtArgs> | null
     /**
+     * Omit specific fields from the File
+     */
+    omit?: FileOmit<ExtArgs> | null
+    /**
      * The data used to create many Files.
      */
     data: FileCreateManyInput | FileCreateManyInput[]
@@ -3973,6 +4305,10 @@ export namespace Prisma {
      * Select specific fields to fetch from the File
      */
     select?: FileSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the File
+     */
+    omit?: FileOmit<ExtArgs> | null
     /**
      * Choose, which related nodes to fetch as well
      */
@@ -4002,6 +4338,32 @@ export namespace Prisma {
   }
 
   /**
+   * File updateManyAndReturn
+   */
+  export type FileUpdateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the File
+     */
+    select?: FileSelectUpdateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the File
+     */
+    omit?: FileOmit<ExtArgs> | null
+    /**
+     * The data used to update Files.
+     */
+    data: XOR<FileUpdateManyMutationInput, FileUncheckedUpdateManyInput>
+    /**
+     * Filter which Files to update
+     */
+    where?: FileWhereInput
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: FileIncludeUpdateManyAndReturn<ExtArgs> | null
+  }
+
+  /**
    * File upsert
    */
   export type FileUpsertArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
@@ -4009,6 +4371,10 @@ export namespace Prisma {
      * Select specific fields to fetch from the File
      */
     select?: FileSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the File
+     */
+    omit?: FileOmit<ExtArgs> | null
     /**
      * Choose, which related nodes to fetch as well
      */
@@ -4035,6 +4401,10 @@ export namespace Prisma {
      * Select specific fields to fetch from the File
      */
     select?: FileSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the File
+     */
+    omit?: FileOmit<ExtArgs> | null
     /**
      * Choose, which related nodes to fetch as well
      */
@@ -4064,6 +4434,10 @@ export namespace Prisma {
      */
     select?: FileSelect<ExtArgs> | null
     /**
+     * Omit specific fields from the File
+     */
+    omit?: FileOmit<ExtArgs> | null
+    /**
      * Choose, which related nodes to fetch as well
      */
     include?: FileInclude<ExtArgs> | null
@@ -4089,9 +4463,10 @@ export namespace Prisma {
     name: 'name',
     email: 'email',
     password: 'password',
+    avatarPath: 'avatarPath',
     role: 'role',
-    quota: 'quota',
-    usedSpace: 'usedSpace',
+    storageQuota: 'storageQuota',
+    usedQuota: 'usedQuota',
     createdAt: 'createdAt',
     updatedAt: 'updatedAt'
   };
@@ -4104,7 +4479,7 @@ export namespace Prisma {
     email: 'email',
     token: 'token',
     role: 'role',
-    quota: 'quota',
+    storageQuota: 'storageQuota',
     createdAt: 'createdAt'
   };
 
@@ -4119,8 +4494,8 @@ export namespace Prisma {
     size: 'size',
     path: 'path',
     thumbnail: 'thumbnail',
-    parentId: 'parentId',
-    isFolder: 'isFolder',
+    directoryId: 'directoryId',
+    isDirectory: 'isDirectory',
     createdAt: 'createdAt',
     updatedAt: 'updatedAt'
   };
@@ -4245,9 +4620,10 @@ export namespace Prisma {
     name?: StringFilter<"User"> | string
     email?: StringFilter<"User"> | string
     password?: StringFilter<"User"> | string
+    avatarPath?: StringNullableFilter<"User"> | string | null
     role?: EnumRoleFilter<"User"> | $Enums.Role
-    quota?: IntFilter<"User"> | number
-    usedSpace?: IntFilter<"User"> | number
+    storageQuota?: IntFilter<"User"> | number
+    usedQuota?: IntFilter<"User"> | number
     createdAt?: DateTimeFilter<"User"> | Date | string
     updatedAt?: DateTimeFilter<"User"> | Date | string
     files?: FileListRelationFilter
@@ -4258,9 +4634,10 @@ export namespace Prisma {
     name?: SortOrder
     email?: SortOrder
     password?: SortOrder
+    avatarPath?: SortOrderInput | SortOrder
     role?: SortOrder
-    quota?: SortOrder
-    usedSpace?: SortOrder
+    storageQuota?: SortOrder
+    usedQuota?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
     files?: FileOrderByRelationAggregateInput
@@ -4274,9 +4651,10 @@ export namespace Prisma {
     NOT?: UserWhereInput | UserWhereInput[]
     name?: StringFilter<"User"> | string
     password?: StringFilter<"User"> | string
+    avatarPath?: StringNullableFilter<"User"> | string | null
     role?: EnumRoleFilter<"User"> | $Enums.Role
-    quota?: IntFilter<"User"> | number
-    usedSpace?: IntFilter<"User"> | number
+    storageQuota?: IntFilter<"User"> | number
+    usedQuota?: IntFilter<"User"> | number
     createdAt?: DateTimeFilter<"User"> | Date | string
     updatedAt?: DateTimeFilter<"User"> | Date | string
     files?: FileListRelationFilter
@@ -4287,9 +4665,10 @@ export namespace Prisma {
     name?: SortOrder
     email?: SortOrder
     password?: SortOrder
+    avatarPath?: SortOrderInput | SortOrder
     role?: SortOrder
-    quota?: SortOrder
-    usedSpace?: SortOrder
+    storageQuota?: SortOrder
+    usedQuota?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
     _count?: UserCountOrderByAggregateInput
@@ -4307,9 +4686,10 @@ export namespace Prisma {
     name?: StringWithAggregatesFilter<"User"> | string
     email?: StringWithAggregatesFilter<"User"> | string
     password?: StringWithAggregatesFilter<"User"> | string
+    avatarPath?: StringNullableWithAggregatesFilter<"User"> | string | null
     role?: EnumRoleWithAggregatesFilter<"User"> | $Enums.Role
-    quota?: IntWithAggregatesFilter<"User"> | number
-    usedSpace?: IntWithAggregatesFilter<"User"> | number
+    storageQuota?: IntWithAggregatesFilter<"User"> | number
+    usedQuota?: IntWithAggregatesFilter<"User"> | number
     createdAt?: DateTimeWithAggregatesFilter<"User"> | Date | string
     updatedAt?: DateTimeWithAggregatesFilter<"User"> | Date | string
   }
@@ -4322,7 +4702,7 @@ export namespace Prisma {
     email?: StringFilter<"Invite"> | string
     token?: StringFilter<"Invite"> | string
     role?: EnumRoleFilter<"Invite"> | $Enums.Role
-    quota?: IntNullableFilter<"Invite"> | number | null
+    storageQuota?: IntFilter<"Invite"> | number
     createdAt?: DateTimeFilter<"Invite"> | Date | string
   }
 
@@ -4331,7 +4711,7 @@ export namespace Prisma {
     email?: SortOrder
     token?: SortOrder
     role?: SortOrder
-    quota?: SortOrderInput | SortOrder
+    storageQuota?: SortOrder
     createdAt?: SortOrder
   }
 
@@ -4343,7 +4723,7 @@ export namespace Prisma {
     OR?: InviteWhereInput[]
     NOT?: InviteWhereInput | InviteWhereInput[]
     role?: EnumRoleFilter<"Invite"> | $Enums.Role
-    quota?: IntNullableFilter<"Invite"> | number | null
+    storageQuota?: IntFilter<"Invite"> | number
     createdAt?: DateTimeFilter<"Invite"> | Date | string
   }, "id" | "email" | "token">
 
@@ -4352,7 +4732,7 @@ export namespace Prisma {
     email?: SortOrder
     token?: SortOrder
     role?: SortOrder
-    quota?: SortOrderInput | SortOrder
+    storageQuota?: SortOrder
     createdAt?: SortOrder
     _count?: InviteCountOrderByAggregateInput
     _avg?: InviteAvgOrderByAggregateInput
@@ -4369,7 +4749,7 @@ export namespace Prisma {
     email?: StringWithAggregatesFilter<"Invite"> | string
     token?: StringWithAggregatesFilter<"Invite"> | string
     role?: EnumRoleWithAggregatesFilter<"Invite"> | $Enums.Role
-    quota?: IntNullableWithAggregatesFilter<"Invite"> | number | null
+    storageQuota?: IntWithAggregatesFilter<"Invite"> | number
     createdAt?: DateTimeWithAggregatesFilter<"Invite"> | Date | string
   }
 
@@ -4384,8 +4764,8 @@ export namespace Prisma {
     size?: IntFilter<"File"> | number
     path?: StringFilter<"File"> | string
     thumbnail?: StringNullableFilter<"File"> | string | null
-    parentId?: StringNullableFilter<"File"> | string | null
-    isFolder?: BoolFilter<"File"> | boolean
+    directoryId?: StringNullableFilter<"File"> | string | null
+    isDirectory?: BoolFilter<"File"> | boolean
     createdAt?: DateTimeFilter<"File"> | Date | string
     updatedAt?: DateTimeFilter<"File"> | Date | string
     user?: XOR<UserScalarRelationFilter, UserWhereInput>
@@ -4399,8 +4779,8 @@ export namespace Prisma {
     size?: SortOrder
     path?: SortOrder
     thumbnail?: SortOrderInput | SortOrder
-    parentId?: SortOrderInput | SortOrder
-    isFolder?: SortOrder
+    directoryId?: SortOrderInput | SortOrder
+    isDirectory?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
     user?: UserOrderByWithRelationInput
@@ -4417,8 +4797,8 @@ export namespace Prisma {
     size?: IntFilter<"File"> | number
     path?: StringFilter<"File"> | string
     thumbnail?: StringNullableFilter<"File"> | string | null
-    parentId?: StringNullableFilter<"File"> | string | null
-    isFolder?: BoolFilter<"File"> | boolean
+    directoryId?: StringNullableFilter<"File"> | string | null
+    isDirectory?: BoolFilter<"File"> | boolean
     createdAt?: DateTimeFilter<"File"> | Date | string
     updatedAt?: DateTimeFilter<"File"> | Date | string
     user?: XOR<UserScalarRelationFilter, UserWhereInput>
@@ -4432,8 +4812,8 @@ export namespace Prisma {
     size?: SortOrder
     path?: SortOrder
     thumbnail?: SortOrderInput | SortOrder
-    parentId?: SortOrderInput | SortOrder
-    isFolder?: SortOrder
+    directoryId?: SortOrderInput | SortOrder
+    isDirectory?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
     _count?: FileCountOrderByAggregateInput
@@ -4454,8 +4834,8 @@ export namespace Prisma {
     size?: IntWithAggregatesFilter<"File"> | number
     path?: StringWithAggregatesFilter<"File"> | string
     thumbnail?: StringNullableWithAggregatesFilter<"File"> | string | null
-    parentId?: StringNullableWithAggregatesFilter<"File"> | string | null
-    isFolder?: BoolWithAggregatesFilter<"File"> | boolean
+    directoryId?: StringNullableWithAggregatesFilter<"File"> | string | null
+    isDirectory?: BoolWithAggregatesFilter<"File"> | boolean
     createdAt?: DateTimeWithAggregatesFilter<"File"> | Date | string
     updatedAt?: DateTimeWithAggregatesFilter<"File"> | Date | string
   }
@@ -4465,9 +4845,10 @@ export namespace Prisma {
     name: string
     email: string
     password: string
+    avatarPath?: string | null
     role?: $Enums.Role
-    quota?: number
-    usedSpace?: number
+    storageQuota?: number
+    usedQuota?: number
     createdAt?: Date | string
     updatedAt?: Date | string
     files?: FileCreateNestedManyWithoutUserInput
@@ -4478,9 +4859,10 @@ export namespace Prisma {
     name: string
     email: string
     password: string
+    avatarPath?: string | null
     role?: $Enums.Role
-    quota?: number
-    usedSpace?: number
+    storageQuota?: number
+    usedQuota?: number
     createdAt?: Date | string
     updatedAt?: Date | string
     files?: FileUncheckedCreateNestedManyWithoutUserInput
@@ -4491,9 +4873,10 @@ export namespace Prisma {
     name?: StringFieldUpdateOperationsInput | string
     email?: StringFieldUpdateOperationsInput | string
     password?: StringFieldUpdateOperationsInput | string
+    avatarPath?: NullableStringFieldUpdateOperationsInput | string | null
     role?: EnumRoleFieldUpdateOperationsInput | $Enums.Role
-    quota?: IntFieldUpdateOperationsInput | number
-    usedSpace?: IntFieldUpdateOperationsInput | number
+    storageQuota?: IntFieldUpdateOperationsInput | number
+    usedQuota?: IntFieldUpdateOperationsInput | number
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     files?: FileUpdateManyWithoutUserNestedInput
@@ -4504,9 +4887,10 @@ export namespace Prisma {
     name?: StringFieldUpdateOperationsInput | string
     email?: StringFieldUpdateOperationsInput | string
     password?: StringFieldUpdateOperationsInput | string
+    avatarPath?: NullableStringFieldUpdateOperationsInput | string | null
     role?: EnumRoleFieldUpdateOperationsInput | $Enums.Role
-    quota?: IntFieldUpdateOperationsInput | number
-    usedSpace?: IntFieldUpdateOperationsInput | number
+    storageQuota?: IntFieldUpdateOperationsInput | number
+    usedQuota?: IntFieldUpdateOperationsInput | number
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     files?: FileUncheckedUpdateManyWithoutUserNestedInput
@@ -4517,9 +4901,10 @@ export namespace Prisma {
     name: string
     email: string
     password: string
+    avatarPath?: string | null
     role?: $Enums.Role
-    quota?: number
-    usedSpace?: number
+    storageQuota?: number
+    usedQuota?: number
     createdAt?: Date | string
     updatedAt?: Date | string
   }
@@ -4529,9 +4914,10 @@ export namespace Prisma {
     name?: StringFieldUpdateOperationsInput | string
     email?: StringFieldUpdateOperationsInput | string
     password?: StringFieldUpdateOperationsInput | string
+    avatarPath?: NullableStringFieldUpdateOperationsInput | string | null
     role?: EnumRoleFieldUpdateOperationsInput | $Enums.Role
-    quota?: IntFieldUpdateOperationsInput | number
-    usedSpace?: IntFieldUpdateOperationsInput | number
+    storageQuota?: IntFieldUpdateOperationsInput | number
+    usedQuota?: IntFieldUpdateOperationsInput | number
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
@@ -4541,9 +4927,10 @@ export namespace Prisma {
     name?: StringFieldUpdateOperationsInput | string
     email?: StringFieldUpdateOperationsInput | string
     password?: StringFieldUpdateOperationsInput | string
+    avatarPath?: NullableStringFieldUpdateOperationsInput | string | null
     role?: EnumRoleFieldUpdateOperationsInput | $Enums.Role
-    quota?: IntFieldUpdateOperationsInput | number
-    usedSpace?: IntFieldUpdateOperationsInput | number
+    storageQuota?: IntFieldUpdateOperationsInput | number
+    usedQuota?: IntFieldUpdateOperationsInput | number
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
@@ -4553,7 +4940,7 @@ export namespace Prisma {
     email: string
     token: string
     role?: $Enums.Role
-    quota?: number | null
+    storageQuota?: number
     createdAt?: Date | string
   }
 
@@ -4562,7 +4949,7 @@ export namespace Prisma {
     email: string
     token: string
     role?: $Enums.Role
-    quota?: number | null
+    storageQuota?: number
     createdAt?: Date | string
   }
 
@@ -4571,7 +4958,7 @@ export namespace Prisma {
     email?: StringFieldUpdateOperationsInput | string
     token?: StringFieldUpdateOperationsInput | string
     role?: EnumRoleFieldUpdateOperationsInput | $Enums.Role
-    quota?: NullableIntFieldUpdateOperationsInput | number | null
+    storageQuota?: IntFieldUpdateOperationsInput | number
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
@@ -4580,7 +4967,7 @@ export namespace Prisma {
     email?: StringFieldUpdateOperationsInput | string
     token?: StringFieldUpdateOperationsInput | string
     role?: EnumRoleFieldUpdateOperationsInput | $Enums.Role
-    quota?: NullableIntFieldUpdateOperationsInput | number | null
+    storageQuota?: IntFieldUpdateOperationsInput | number
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
@@ -4589,7 +4976,7 @@ export namespace Prisma {
     email: string
     token: string
     role?: $Enums.Role
-    quota?: number | null
+    storageQuota?: number
     createdAt?: Date | string
   }
 
@@ -4598,7 +4985,7 @@ export namespace Prisma {
     email?: StringFieldUpdateOperationsInput | string
     token?: StringFieldUpdateOperationsInput | string
     role?: EnumRoleFieldUpdateOperationsInput | $Enums.Role
-    quota?: NullableIntFieldUpdateOperationsInput | number | null
+    storageQuota?: IntFieldUpdateOperationsInput | number
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
@@ -4607,7 +4994,7 @@ export namespace Prisma {
     email?: StringFieldUpdateOperationsInput | string
     token?: StringFieldUpdateOperationsInput | string
     role?: EnumRoleFieldUpdateOperationsInput | $Enums.Role
-    quota?: NullableIntFieldUpdateOperationsInput | number | null
+    storageQuota?: IntFieldUpdateOperationsInput | number
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
@@ -4618,8 +5005,8 @@ export namespace Prisma {
     size: number
     path: string
     thumbnail?: string | null
-    parentId?: string | null
-    isFolder?: boolean
+    directoryId?: string | null
+    isDirectory?: boolean
     createdAt?: Date | string
     updatedAt?: Date | string
     user: UserCreateNestedOneWithoutFilesInput
@@ -4633,8 +5020,8 @@ export namespace Prisma {
     size: number
     path: string
     thumbnail?: string | null
-    parentId?: string | null
-    isFolder?: boolean
+    directoryId?: string | null
+    isDirectory?: boolean
     createdAt?: Date | string
     updatedAt?: Date | string
   }
@@ -4646,8 +5033,8 @@ export namespace Prisma {
     size?: IntFieldUpdateOperationsInput | number
     path?: StringFieldUpdateOperationsInput | string
     thumbnail?: NullableStringFieldUpdateOperationsInput | string | null
-    parentId?: NullableStringFieldUpdateOperationsInput | string | null
-    isFolder?: BoolFieldUpdateOperationsInput | boolean
+    directoryId?: NullableStringFieldUpdateOperationsInput | string | null
+    isDirectory?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     user?: UserUpdateOneRequiredWithoutFilesNestedInput
@@ -4661,8 +5048,8 @@ export namespace Prisma {
     size?: IntFieldUpdateOperationsInput | number
     path?: StringFieldUpdateOperationsInput | string
     thumbnail?: NullableStringFieldUpdateOperationsInput | string | null
-    parentId?: NullableStringFieldUpdateOperationsInput | string | null
-    isFolder?: BoolFieldUpdateOperationsInput | boolean
+    directoryId?: NullableStringFieldUpdateOperationsInput | string | null
+    isDirectory?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
@@ -4675,8 +5062,8 @@ export namespace Prisma {
     size: number
     path: string
     thumbnail?: string | null
-    parentId?: string | null
-    isFolder?: boolean
+    directoryId?: string | null
+    isDirectory?: boolean
     createdAt?: Date | string
     updatedAt?: Date | string
   }
@@ -4688,8 +5075,8 @@ export namespace Prisma {
     size?: IntFieldUpdateOperationsInput | number
     path?: StringFieldUpdateOperationsInput | string
     thumbnail?: NullableStringFieldUpdateOperationsInput | string | null
-    parentId?: NullableStringFieldUpdateOperationsInput | string | null
-    isFolder?: BoolFieldUpdateOperationsInput | boolean
+    directoryId?: NullableStringFieldUpdateOperationsInput | string | null
+    isDirectory?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
@@ -4702,8 +5089,8 @@ export namespace Prisma {
     size?: IntFieldUpdateOperationsInput | number
     path?: StringFieldUpdateOperationsInput | string
     thumbnail?: NullableStringFieldUpdateOperationsInput | string | null
-    parentId?: NullableStringFieldUpdateOperationsInput | string | null
-    isFolder?: BoolFieldUpdateOperationsInput | boolean
+    directoryId?: NullableStringFieldUpdateOperationsInput | string | null
+    isDirectory?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
@@ -4721,6 +5108,21 @@ export namespace Prisma {
     endsWith?: string | StringFieldRefInput<$PrismaModel>
     mode?: QueryMode
     not?: NestedStringFilter<$PrismaModel> | string
+  }
+
+  export type StringNullableFilter<$PrismaModel = never> = {
+    equals?: string | StringFieldRefInput<$PrismaModel> | null
+    in?: string[] | ListStringFieldRefInput<$PrismaModel> | null
+    notIn?: string[] | ListStringFieldRefInput<$PrismaModel> | null
+    lt?: string | StringFieldRefInput<$PrismaModel>
+    lte?: string | StringFieldRefInput<$PrismaModel>
+    gt?: string | StringFieldRefInput<$PrismaModel>
+    gte?: string | StringFieldRefInput<$PrismaModel>
+    contains?: string | StringFieldRefInput<$PrismaModel>
+    startsWith?: string | StringFieldRefInput<$PrismaModel>
+    endsWith?: string | StringFieldRefInput<$PrismaModel>
+    mode?: QueryMode
+    not?: NestedStringNullableFilter<$PrismaModel> | string | null
   }
 
   export type EnumRoleFilter<$PrismaModel = never> = {
@@ -4758,6 +5160,11 @@ export namespace Prisma {
     none?: FileWhereInput
   }
 
+  export type SortOrderInput = {
+    sort: SortOrder
+    nulls?: NullsOrder
+  }
+
   export type FileOrderByRelationAggregateInput = {
     _count?: SortOrder
   }
@@ -4767,16 +5174,17 @@ export namespace Prisma {
     name?: SortOrder
     email?: SortOrder
     password?: SortOrder
+    avatarPath?: SortOrder
     role?: SortOrder
-    quota?: SortOrder
-    usedSpace?: SortOrder
+    storageQuota?: SortOrder
+    usedQuota?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
   }
 
   export type UserAvgOrderByAggregateInput = {
-    quota?: SortOrder
-    usedSpace?: SortOrder
+    storageQuota?: SortOrder
+    usedQuota?: SortOrder
   }
 
   export type UserMaxOrderByAggregateInput = {
@@ -4784,9 +5192,10 @@ export namespace Prisma {
     name?: SortOrder
     email?: SortOrder
     password?: SortOrder
+    avatarPath?: SortOrder
     role?: SortOrder
-    quota?: SortOrder
-    usedSpace?: SortOrder
+    storageQuota?: SortOrder
+    usedQuota?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
   }
@@ -4796,16 +5205,17 @@ export namespace Prisma {
     name?: SortOrder
     email?: SortOrder
     password?: SortOrder
+    avatarPath?: SortOrder
     role?: SortOrder
-    quota?: SortOrder
-    usedSpace?: SortOrder
+    storageQuota?: SortOrder
+    usedQuota?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
   }
 
   export type UserSumOrderByAggregateInput = {
-    quota?: SortOrder
-    usedSpace?: SortOrder
+    storageQuota?: SortOrder
+    usedQuota?: SortOrder
   }
 
   export type StringWithAggregatesFilter<$PrismaModel = never> = {
@@ -4824,6 +5234,24 @@ export namespace Prisma {
     _count?: NestedIntFilter<$PrismaModel>
     _min?: NestedStringFilter<$PrismaModel>
     _max?: NestedStringFilter<$PrismaModel>
+  }
+
+  export type StringNullableWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: string | StringFieldRefInput<$PrismaModel> | null
+    in?: string[] | ListStringFieldRefInput<$PrismaModel> | null
+    notIn?: string[] | ListStringFieldRefInput<$PrismaModel> | null
+    lt?: string | StringFieldRefInput<$PrismaModel>
+    lte?: string | StringFieldRefInput<$PrismaModel>
+    gt?: string | StringFieldRefInput<$PrismaModel>
+    gte?: string | StringFieldRefInput<$PrismaModel>
+    contains?: string | StringFieldRefInput<$PrismaModel>
+    startsWith?: string | StringFieldRefInput<$PrismaModel>
+    endsWith?: string | StringFieldRefInput<$PrismaModel>
+    mode?: QueryMode
+    not?: NestedStringNullableWithAggregatesFilter<$PrismaModel> | string | null
+    _count?: NestedIntNullableFilter<$PrismaModel>
+    _min?: NestedStringNullableFilter<$PrismaModel>
+    _max?: NestedStringNullableFilter<$PrismaModel>
   }
 
   export type EnumRoleWithAggregatesFilter<$PrismaModel = never> = {
@@ -4866,33 +5294,17 @@ export namespace Prisma {
     _max?: NestedDateTimeFilter<$PrismaModel>
   }
 
-  export type IntNullableFilter<$PrismaModel = never> = {
-    equals?: number | IntFieldRefInput<$PrismaModel> | null
-    in?: number[] | ListIntFieldRefInput<$PrismaModel> | null
-    notIn?: number[] | ListIntFieldRefInput<$PrismaModel> | null
-    lt?: number | IntFieldRefInput<$PrismaModel>
-    lte?: number | IntFieldRefInput<$PrismaModel>
-    gt?: number | IntFieldRefInput<$PrismaModel>
-    gte?: number | IntFieldRefInput<$PrismaModel>
-    not?: NestedIntNullableFilter<$PrismaModel> | number | null
-  }
-
-  export type SortOrderInput = {
-    sort: SortOrder
-    nulls?: NullsOrder
-  }
-
   export type InviteCountOrderByAggregateInput = {
     id?: SortOrder
     email?: SortOrder
     token?: SortOrder
     role?: SortOrder
-    quota?: SortOrder
+    storageQuota?: SortOrder
     createdAt?: SortOrder
   }
 
   export type InviteAvgOrderByAggregateInput = {
-    quota?: SortOrder
+    storageQuota?: SortOrder
   }
 
   export type InviteMaxOrderByAggregateInput = {
@@ -4900,7 +5312,7 @@ export namespace Prisma {
     email?: SortOrder
     token?: SortOrder
     role?: SortOrder
-    quota?: SortOrder
+    storageQuota?: SortOrder
     createdAt?: SortOrder
   }
 
@@ -4909,43 +5321,12 @@ export namespace Prisma {
     email?: SortOrder
     token?: SortOrder
     role?: SortOrder
-    quota?: SortOrder
+    storageQuota?: SortOrder
     createdAt?: SortOrder
   }
 
   export type InviteSumOrderByAggregateInput = {
-    quota?: SortOrder
-  }
-
-  export type IntNullableWithAggregatesFilter<$PrismaModel = never> = {
-    equals?: number | IntFieldRefInput<$PrismaModel> | null
-    in?: number[] | ListIntFieldRefInput<$PrismaModel> | null
-    notIn?: number[] | ListIntFieldRefInput<$PrismaModel> | null
-    lt?: number | IntFieldRefInput<$PrismaModel>
-    lte?: number | IntFieldRefInput<$PrismaModel>
-    gt?: number | IntFieldRefInput<$PrismaModel>
-    gte?: number | IntFieldRefInput<$PrismaModel>
-    not?: NestedIntNullableWithAggregatesFilter<$PrismaModel> | number | null
-    _count?: NestedIntNullableFilter<$PrismaModel>
-    _avg?: NestedFloatNullableFilter<$PrismaModel>
-    _sum?: NestedIntNullableFilter<$PrismaModel>
-    _min?: NestedIntNullableFilter<$PrismaModel>
-    _max?: NestedIntNullableFilter<$PrismaModel>
-  }
-
-  export type StringNullableFilter<$PrismaModel = never> = {
-    equals?: string | StringFieldRefInput<$PrismaModel> | null
-    in?: string[] | ListStringFieldRefInput<$PrismaModel> | null
-    notIn?: string[] | ListStringFieldRefInput<$PrismaModel> | null
-    lt?: string | StringFieldRefInput<$PrismaModel>
-    lte?: string | StringFieldRefInput<$PrismaModel>
-    gt?: string | StringFieldRefInput<$PrismaModel>
-    gte?: string | StringFieldRefInput<$PrismaModel>
-    contains?: string | StringFieldRefInput<$PrismaModel>
-    startsWith?: string | StringFieldRefInput<$PrismaModel>
-    endsWith?: string | StringFieldRefInput<$PrismaModel>
-    mode?: QueryMode
-    not?: NestedStringNullableFilter<$PrismaModel> | string | null
+    storageQuota?: SortOrder
   }
 
   export type BoolFilter<$PrismaModel = never> = {
@@ -4966,8 +5347,8 @@ export namespace Prisma {
     size?: SortOrder
     path?: SortOrder
     thumbnail?: SortOrder
-    parentId?: SortOrder
-    isFolder?: SortOrder
+    directoryId?: SortOrder
+    isDirectory?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
   }
@@ -4984,8 +5365,8 @@ export namespace Prisma {
     size?: SortOrder
     path?: SortOrder
     thumbnail?: SortOrder
-    parentId?: SortOrder
-    isFolder?: SortOrder
+    directoryId?: SortOrder
+    isDirectory?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
   }
@@ -4998,32 +5379,14 @@ export namespace Prisma {
     size?: SortOrder
     path?: SortOrder
     thumbnail?: SortOrder
-    parentId?: SortOrder
-    isFolder?: SortOrder
+    directoryId?: SortOrder
+    isDirectory?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
   }
 
   export type FileSumOrderByAggregateInput = {
     size?: SortOrder
-  }
-
-  export type StringNullableWithAggregatesFilter<$PrismaModel = never> = {
-    equals?: string | StringFieldRefInput<$PrismaModel> | null
-    in?: string[] | ListStringFieldRefInput<$PrismaModel> | null
-    notIn?: string[] | ListStringFieldRefInput<$PrismaModel> | null
-    lt?: string | StringFieldRefInput<$PrismaModel>
-    lte?: string | StringFieldRefInput<$PrismaModel>
-    gt?: string | StringFieldRefInput<$PrismaModel>
-    gte?: string | StringFieldRefInput<$PrismaModel>
-    contains?: string | StringFieldRefInput<$PrismaModel>
-    startsWith?: string | StringFieldRefInput<$PrismaModel>
-    endsWith?: string | StringFieldRefInput<$PrismaModel>
-    mode?: QueryMode
-    not?: NestedStringNullableWithAggregatesFilter<$PrismaModel> | string | null
-    _count?: NestedIntNullableFilter<$PrismaModel>
-    _min?: NestedStringNullableFilter<$PrismaModel>
-    _max?: NestedStringNullableFilter<$PrismaModel>
   }
 
   export type BoolWithAggregatesFilter<$PrismaModel = never> = {
@@ -5050,6 +5413,10 @@ export namespace Prisma {
 
   export type StringFieldUpdateOperationsInput = {
     set?: string
+  }
+
+  export type NullableStringFieldUpdateOperationsInput = {
+    set?: string | null
   }
 
   export type EnumRoleFieldUpdateOperationsInput = {
@@ -5096,22 +5463,10 @@ export namespace Prisma {
     deleteMany?: FileScalarWhereInput | FileScalarWhereInput[]
   }
 
-  export type NullableIntFieldUpdateOperationsInput = {
-    set?: number | null
-    increment?: number
-    decrement?: number
-    multiply?: number
-    divide?: number
-  }
-
   export type UserCreateNestedOneWithoutFilesInput = {
     create?: XOR<UserCreateWithoutFilesInput, UserUncheckedCreateWithoutFilesInput>
     connectOrCreate?: UserCreateOrConnectWithoutFilesInput
     connect?: UserWhereUniqueInput
-  }
-
-  export type NullableStringFieldUpdateOperationsInput = {
-    set?: string | null
   }
 
   export type BoolFieldUpdateOperationsInput = {
@@ -5138,6 +5493,20 @@ export namespace Prisma {
     startsWith?: string | StringFieldRefInput<$PrismaModel>
     endsWith?: string | StringFieldRefInput<$PrismaModel>
     not?: NestedStringFilter<$PrismaModel> | string
+  }
+
+  export type NestedStringNullableFilter<$PrismaModel = never> = {
+    equals?: string | StringFieldRefInput<$PrismaModel> | null
+    in?: string[] | ListStringFieldRefInput<$PrismaModel> | null
+    notIn?: string[] | ListStringFieldRefInput<$PrismaModel> | null
+    lt?: string | StringFieldRefInput<$PrismaModel>
+    lte?: string | StringFieldRefInput<$PrismaModel>
+    gt?: string | StringFieldRefInput<$PrismaModel>
+    gte?: string | StringFieldRefInput<$PrismaModel>
+    contains?: string | StringFieldRefInput<$PrismaModel>
+    startsWith?: string | StringFieldRefInput<$PrismaModel>
+    endsWith?: string | StringFieldRefInput<$PrismaModel>
+    not?: NestedStringNullableFilter<$PrismaModel> | string | null
   }
 
   export type NestedEnumRoleFilter<$PrismaModel = never> = {
@@ -5184,6 +5553,34 @@ export namespace Prisma {
     _count?: NestedIntFilter<$PrismaModel>
     _min?: NestedStringFilter<$PrismaModel>
     _max?: NestedStringFilter<$PrismaModel>
+  }
+
+  export type NestedStringNullableWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: string | StringFieldRefInput<$PrismaModel> | null
+    in?: string[] | ListStringFieldRefInput<$PrismaModel> | null
+    notIn?: string[] | ListStringFieldRefInput<$PrismaModel> | null
+    lt?: string | StringFieldRefInput<$PrismaModel>
+    lte?: string | StringFieldRefInput<$PrismaModel>
+    gt?: string | StringFieldRefInput<$PrismaModel>
+    gte?: string | StringFieldRefInput<$PrismaModel>
+    contains?: string | StringFieldRefInput<$PrismaModel>
+    startsWith?: string | StringFieldRefInput<$PrismaModel>
+    endsWith?: string | StringFieldRefInput<$PrismaModel>
+    not?: NestedStringNullableWithAggregatesFilter<$PrismaModel> | string | null
+    _count?: NestedIntNullableFilter<$PrismaModel>
+    _min?: NestedStringNullableFilter<$PrismaModel>
+    _max?: NestedStringNullableFilter<$PrismaModel>
+  }
+
+  export type NestedIntNullableFilter<$PrismaModel = never> = {
+    equals?: number | IntFieldRefInput<$PrismaModel> | null
+    in?: number[] | ListIntFieldRefInput<$PrismaModel> | null
+    notIn?: number[] | ListIntFieldRefInput<$PrismaModel> | null
+    lt?: number | IntFieldRefInput<$PrismaModel>
+    lte?: number | IntFieldRefInput<$PrismaModel>
+    gt?: number | IntFieldRefInput<$PrismaModel>
+    gte?: number | IntFieldRefInput<$PrismaModel>
+    not?: NestedIntNullableFilter<$PrismaModel> | number | null
   }
 
   export type NestedEnumRoleWithAggregatesFilter<$PrismaModel = never> = {
@@ -5237,78 +5634,9 @@ export namespace Prisma {
     _max?: NestedDateTimeFilter<$PrismaModel>
   }
 
-  export type NestedIntNullableFilter<$PrismaModel = never> = {
-    equals?: number | IntFieldRefInput<$PrismaModel> | null
-    in?: number[] | ListIntFieldRefInput<$PrismaModel> | null
-    notIn?: number[] | ListIntFieldRefInput<$PrismaModel> | null
-    lt?: number | IntFieldRefInput<$PrismaModel>
-    lte?: number | IntFieldRefInput<$PrismaModel>
-    gt?: number | IntFieldRefInput<$PrismaModel>
-    gte?: number | IntFieldRefInput<$PrismaModel>
-    not?: NestedIntNullableFilter<$PrismaModel> | number | null
-  }
-
-  export type NestedIntNullableWithAggregatesFilter<$PrismaModel = never> = {
-    equals?: number | IntFieldRefInput<$PrismaModel> | null
-    in?: number[] | ListIntFieldRefInput<$PrismaModel> | null
-    notIn?: number[] | ListIntFieldRefInput<$PrismaModel> | null
-    lt?: number | IntFieldRefInput<$PrismaModel>
-    lte?: number | IntFieldRefInput<$PrismaModel>
-    gt?: number | IntFieldRefInput<$PrismaModel>
-    gte?: number | IntFieldRefInput<$PrismaModel>
-    not?: NestedIntNullableWithAggregatesFilter<$PrismaModel> | number | null
-    _count?: NestedIntNullableFilter<$PrismaModel>
-    _avg?: NestedFloatNullableFilter<$PrismaModel>
-    _sum?: NestedIntNullableFilter<$PrismaModel>
-    _min?: NestedIntNullableFilter<$PrismaModel>
-    _max?: NestedIntNullableFilter<$PrismaModel>
-  }
-
-  export type NestedFloatNullableFilter<$PrismaModel = never> = {
-    equals?: number | FloatFieldRefInput<$PrismaModel> | null
-    in?: number[] | ListFloatFieldRefInput<$PrismaModel> | null
-    notIn?: number[] | ListFloatFieldRefInput<$PrismaModel> | null
-    lt?: number | FloatFieldRefInput<$PrismaModel>
-    lte?: number | FloatFieldRefInput<$PrismaModel>
-    gt?: number | FloatFieldRefInput<$PrismaModel>
-    gte?: number | FloatFieldRefInput<$PrismaModel>
-    not?: NestedFloatNullableFilter<$PrismaModel> | number | null
-  }
-
-  export type NestedStringNullableFilter<$PrismaModel = never> = {
-    equals?: string | StringFieldRefInput<$PrismaModel> | null
-    in?: string[] | ListStringFieldRefInput<$PrismaModel> | null
-    notIn?: string[] | ListStringFieldRefInput<$PrismaModel> | null
-    lt?: string | StringFieldRefInput<$PrismaModel>
-    lte?: string | StringFieldRefInput<$PrismaModel>
-    gt?: string | StringFieldRefInput<$PrismaModel>
-    gte?: string | StringFieldRefInput<$PrismaModel>
-    contains?: string | StringFieldRefInput<$PrismaModel>
-    startsWith?: string | StringFieldRefInput<$PrismaModel>
-    endsWith?: string | StringFieldRefInput<$PrismaModel>
-    not?: NestedStringNullableFilter<$PrismaModel> | string | null
-  }
-
   export type NestedBoolFilter<$PrismaModel = never> = {
     equals?: boolean | BooleanFieldRefInput<$PrismaModel>
     not?: NestedBoolFilter<$PrismaModel> | boolean
-  }
-
-  export type NestedStringNullableWithAggregatesFilter<$PrismaModel = never> = {
-    equals?: string | StringFieldRefInput<$PrismaModel> | null
-    in?: string[] | ListStringFieldRefInput<$PrismaModel> | null
-    notIn?: string[] | ListStringFieldRefInput<$PrismaModel> | null
-    lt?: string | StringFieldRefInput<$PrismaModel>
-    lte?: string | StringFieldRefInput<$PrismaModel>
-    gt?: string | StringFieldRefInput<$PrismaModel>
-    gte?: string | StringFieldRefInput<$PrismaModel>
-    contains?: string | StringFieldRefInput<$PrismaModel>
-    startsWith?: string | StringFieldRefInput<$PrismaModel>
-    endsWith?: string | StringFieldRefInput<$PrismaModel>
-    not?: NestedStringNullableWithAggregatesFilter<$PrismaModel> | string | null
-    _count?: NestedIntNullableFilter<$PrismaModel>
-    _min?: NestedStringNullableFilter<$PrismaModel>
-    _max?: NestedStringNullableFilter<$PrismaModel>
   }
 
   export type NestedBoolWithAggregatesFilter<$PrismaModel = never> = {
@@ -5326,8 +5654,8 @@ export namespace Prisma {
     size: number
     path: string
     thumbnail?: string | null
-    parentId?: string | null
-    isFolder?: boolean
+    directoryId?: string | null
+    isDirectory?: boolean
     createdAt?: Date | string
     updatedAt?: Date | string
   }
@@ -5339,8 +5667,8 @@ export namespace Prisma {
     size: number
     path: string
     thumbnail?: string | null
-    parentId?: string | null
-    isFolder?: boolean
+    directoryId?: string | null
+    isDirectory?: boolean
     createdAt?: Date | string
     updatedAt?: Date | string
   }
@@ -5382,8 +5710,8 @@ export namespace Prisma {
     size?: IntFilter<"File"> | number
     path?: StringFilter<"File"> | string
     thumbnail?: StringNullableFilter<"File"> | string | null
-    parentId?: StringNullableFilter<"File"> | string | null
-    isFolder?: BoolFilter<"File"> | boolean
+    directoryId?: StringNullableFilter<"File"> | string | null
+    isDirectory?: BoolFilter<"File"> | boolean
     createdAt?: DateTimeFilter<"File"> | Date | string
     updatedAt?: DateTimeFilter<"File"> | Date | string
   }
@@ -5393,9 +5721,10 @@ export namespace Prisma {
     name: string
     email: string
     password: string
+    avatarPath?: string | null
     role?: $Enums.Role
-    quota?: number
-    usedSpace?: number
+    storageQuota?: number
+    usedQuota?: number
     createdAt?: Date | string
     updatedAt?: Date | string
   }
@@ -5405,9 +5734,10 @@ export namespace Prisma {
     name: string
     email: string
     password: string
+    avatarPath?: string | null
     role?: $Enums.Role
-    quota?: number
-    usedSpace?: number
+    storageQuota?: number
+    usedQuota?: number
     createdAt?: Date | string
     updatedAt?: Date | string
   }
@@ -5433,9 +5763,10 @@ export namespace Prisma {
     name?: StringFieldUpdateOperationsInput | string
     email?: StringFieldUpdateOperationsInput | string
     password?: StringFieldUpdateOperationsInput | string
+    avatarPath?: NullableStringFieldUpdateOperationsInput | string | null
     role?: EnumRoleFieldUpdateOperationsInput | $Enums.Role
-    quota?: IntFieldUpdateOperationsInput | number
-    usedSpace?: IntFieldUpdateOperationsInput | number
+    storageQuota?: IntFieldUpdateOperationsInput | number
+    usedQuota?: IntFieldUpdateOperationsInput | number
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
@@ -5445,9 +5776,10 @@ export namespace Prisma {
     name?: StringFieldUpdateOperationsInput | string
     email?: StringFieldUpdateOperationsInput | string
     password?: StringFieldUpdateOperationsInput | string
+    avatarPath?: NullableStringFieldUpdateOperationsInput | string | null
     role?: EnumRoleFieldUpdateOperationsInput | $Enums.Role
-    quota?: IntFieldUpdateOperationsInput | number
-    usedSpace?: IntFieldUpdateOperationsInput | number
+    storageQuota?: IntFieldUpdateOperationsInput | number
+    usedQuota?: IntFieldUpdateOperationsInput | number
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
@@ -5459,8 +5791,8 @@ export namespace Prisma {
     size: number
     path: string
     thumbnail?: string | null
-    parentId?: string | null
-    isFolder?: boolean
+    directoryId?: string | null
+    isDirectory?: boolean
     createdAt?: Date | string
     updatedAt?: Date | string
   }
@@ -5472,8 +5804,8 @@ export namespace Prisma {
     size?: IntFieldUpdateOperationsInput | number
     path?: StringFieldUpdateOperationsInput | string
     thumbnail?: NullableStringFieldUpdateOperationsInput | string | null
-    parentId?: NullableStringFieldUpdateOperationsInput | string | null
-    isFolder?: BoolFieldUpdateOperationsInput | boolean
+    directoryId?: NullableStringFieldUpdateOperationsInput | string | null
+    isDirectory?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
@@ -5485,8 +5817,8 @@ export namespace Prisma {
     size?: IntFieldUpdateOperationsInput | number
     path?: StringFieldUpdateOperationsInput | string
     thumbnail?: NullableStringFieldUpdateOperationsInput | string | null
-    parentId?: NullableStringFieldUpdateOperationsInput | string | null
-    isFolder?: BoolFieldUpdateOperationsInput | boolean
+    directoryId?: NullableStringFieldUpdateOperationsInput | string | null
+    isDirectory?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
@@ -5498,8 +5830,8 @@ export namespace Prisma {
     size?: IntFieldUpdateOperationsInput | number
     path?: StringFieldUpdateOperationsInput | string
     thumbnail?: NullableStringFieldUpdateOperationsInput | string | null
-    parentId?: NullableStringFieldUpdateOperationsInput | string | null
-    isFolder?: BoolFieldUpdateOperationsInput | boolean
+    directoryId?: NullableStringFieldUpdateOperationsInput | string | null
+    isDirectory?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }

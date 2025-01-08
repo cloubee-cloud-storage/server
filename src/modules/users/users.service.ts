@@ -54,8 +54,8 @@ export class UsersService {
         }
     }
 
-    async updateUserByAdmin(id: string, role?: Role, quota?: number) {
-        if (!role && !quota) {
+    async updateUserByAdmin(id: string, role?: Role, storageQuota?: number) {
+        if (!role && !storageQuota) {
             throw new InternalServerErrorException('No changes provided');
         }
 
@@ -64,7 +64,7 @@ export class UsersService {
                 where: { id },
                 data: {
                     ...(role && { role }),
-                    ...(quota && { quota }),
+                    ...(storageQuota && { storageQuota }),
                 },
             });
 

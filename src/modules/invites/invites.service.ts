@@ -8,7 +8,7 @@ import { Role } from '../../../prisma/generated';
 @Injectable()
 export class InvitesService {
     constructor(private readonly prisma: PrismaService) {}
-    async createInvite(email: string, role: Role, quota: number) {
+    async createInvite(email: string, role: Role, storageQuota: number) {
         const existingInvite = await this.prisma.invite.findFirst({
             where: { email: email },
         });
@@ -26,10 +26,10 @@ export class InvitesService {
 
         await this.prisma.invite.create({
             data: {
-                email,
-                role,
-                quota,
-                token,
+                email: email,
+                role: role,
+                storageQuota: storageQuota,
+                token: token,
             },
         });
 

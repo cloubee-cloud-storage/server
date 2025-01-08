@@ -9,44 +9,45 @@ datasource db {
 }
 
 model User {
-  id        String   @id @default(uuid())
-  name      String
-  email     String   @unique
-  password  String
-  role      Role     @default(USER)
-  quota     Int      @default(0)
-  usedSpace Int      @default(0) @map("used_space")
-  createdAt DateTime @default(now()) @map("created_at")
-  updatedAt DateTime @updatedAt @map("updated_at")
-  files     File[]
+  id           String   @id @default(uuid())
+  name         String
+  email        String   @unique
+  password     String
+  avatarPath   String?  @map("avatar_path")
+  role         Role     @default(USER)
+  storageQuota Int      @default(0) @map("storage_quota")
+  usedQuota    Int      @default(0) @map("used_quota")
+  createdAt    DateTime @default(now()) @map("created_at")
+  updatedAt    DateTime @updatedAt @map("updated_at")
+  files        File[]
 
   @@map("users")
 }
 
 model Invite {
-  id        String   @id @default(uuid())
-  email     String   @unique
-  token     String   @unique
-  role      Role     @default(USER)
-  quota     Int?
-  createdAt DateTime @default(now()) @map("created_at")
+  id           String   @id @default(uuid())
+  email        String   @unique
+  token        String   @unique
+  role         Role     @default(USER)
+  storageQuota Int      @default(0) @map("storage_quota")
+  createdAt    DateTime @default(now()) @map("created_at")
 
   @@map("invites")
 }
 
 model File {
-  id        String   @id @default(uuid())
-  userId    String   @map("user_id")
-  user      User     @relation(fields: [userId], references: [id])
-  name      String
-  mimeType  String?  @map("mime_type")
-  size      Int
-  path      String
-  thumbnail String?
-  parentId  String? // Поле для связи с родительской папкой
-  isFolder  Boolean  @default(false) // Флаг для указания, что это папка
-  createdAt DateTime @default(now()) @map("created_at")
-  updatedAt DateTime @updatedAt @map("updated_at")
+  id          String   @id @default(uuid())
+  userId      String   @map("user_id")
+  user        User     @relation(fields: [userId], references: [id])
+  name        String
+  mimeType    String?  @map("mime_type")
+  size        Int
+  path        String
+  thumbnail   String?
+  directoryId String?  @map("directory_id")
+  isDirectory Boolean  @default(false) @map("is_directory")
+  createdAt   DateTime @default(now()) @map("created_at")
+  updatedAt   DateTime @updatedAt @map("updated_at")
 
   @@map("files")
 }
@@ -54,9 +55,4 @@ model File {
 enum Role {
   USER
   ADMIN
-}
-
-enum FileType {
-  FILE
-  DIR
 }

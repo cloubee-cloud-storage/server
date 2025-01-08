@@ -14,5 +14,5 @@ export class CreateInviteDto {
     @IsInt({ message: 'Quota must be an integer' })
     @Min(1, { message: 'Quota must be at least 1MB' })
     @ApiProperty()
-    quota: number; // Указываем в мегабайтах
+    storageQuota: number;
 }

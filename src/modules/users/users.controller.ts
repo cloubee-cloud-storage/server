@@ -50,6 +50,10 @@ export class UsersController {
         @Param('id') id: string,
         @Body() dto: UpdateUserByAdminDto,
     ) {
-        return this.usersService.updateUserByAdmin(id, dto.role, dto.quota);
+        return this.usersService.updateUserByAdmin(
+            id,
+            dto.role,
+            dto.storageQuota,
+        );
     }
 }

@@ -13,5 +13,5 @@ export class UpdateUserByAdminDto {
     @Min(1, { message: 'Quota must be at least 1MB' })
     @IsOptional()
     @ApiProperty()
-    quota?: number;
+    storageQuota?: number;
 }

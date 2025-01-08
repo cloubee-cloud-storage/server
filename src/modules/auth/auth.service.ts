@@ -44,10 +44,10 @@ export class AuthService {
         };
     }
 
-    async register(token: string, name: string, password: string) {
+    async register(inviteToken: string, name: string, password: string) {
         try {
             const invite = await this.prisma.invite.findUnique({
-                where: { token },
+                where: { token: inviteToken },
             });
 
             const hashedPassword = await bcrypt.hash(password, 10);
@@ -57,7 +57,7 @@ export class AuthService {
                     email: invite.email,
                     password: hashedPassword,
                     role: invite.role,
-                    quota: invite.quota,
+                    storageQuota: invite.storageQuota,
                 },
             });
 
@@ -76,7 +76,7 @@ export class AuthService {
             }
 
             await this.prisma.invite.delete({
-                where: { token },
+                where: { token: inviteToken },
             });
 
             return { message: 'User successfully registered' };
