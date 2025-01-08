@@ -39,10 +39,12 @@ model File {
   userId    String   @map("user_id")
   user      User     @relation(fields: [userId], references: [id])
   name      String
-  type      String
+  mimeType  String?  @map("mime_type")
   size      Int
   path      String
   thumbnail String?
+  parentId  String? // Поле для связи с родительской папкой
+  isFolder  Boolean  @default(false) // Флаг для указания, что это папка
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @updatedAt @map("updated_at")
 
@@ -52,4 +54,9 @@ model File {
 enum Role {
   USER
   ADMIN
+}
+
+enum FileType {
+  FILE
+  DIR
 }

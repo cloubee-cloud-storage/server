@@ -8,7 +8,7 @@ export class CreateInviteDto {
     email: string;
 
     @IsEnum(Role, { message: 'Role must be either USER or ADMIN' })
-    @ApiProperty()
+    @ApiProperty({ enum: Role })
     role: Role;
 
     @IsInt({ message: 'Quota must be an integer' })

@@ -142,10 +142,12 @@ exports.Prisma.FileScalarFieldEnum = {
   id: 'id',
   userId: 'userId',
   name: 'name',
-  type: 'type',
+  mimeType: 'mimeType',
   size: 'size',
   path: 'path',
   thumbnail: 'thumbnail',
+  parentId: 'parentId',
+  isFolder: 'isFolder',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
 };
