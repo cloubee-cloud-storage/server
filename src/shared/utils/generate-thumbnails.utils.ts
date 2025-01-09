@@ -36,7 +36,7 @@ export const generateThumbnails = async (
                 path.join(
                     userId,
                     'thumbnails',
-                    `${size.name}_${path.basename(imagePath)}`,
+                    `${size.name}_${fileId}_${path.basename(imagePath)}`,
                 ),
             );
         }

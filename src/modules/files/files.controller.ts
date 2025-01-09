@@ -2,13 +2,20 @@ import {
     Body,
     Controller,
     Get,
+    Param,
     Post,
     Query,
     Req,
     Res,
     UseGuards,
 } from '@nestjs/common';
-import { ApiBearerAuth, ApiBody, ApiConsumes, ApiQuery } from '@nestjs/swagger';
+import {
+    ApiBearerAuth,
+    ApiBody,
+    ApiConsumes,
+    ApiParam,
+    ApiQuery,
+} from '@nestjs/swagger';
 import { Request, Response } from 'express';
 
 import { MkdirDto } from '@/modules/files/dto/mkdir.dto';
@@ -57,5 +64,21 @@ export class FilesController {
         @Query('directoryId') directoryId?: string,
     ) {
         return this.filesService.upload(userId, req, res, directoryId);
+    }
+
+    @Get(':fileId/thumbnail/:size')
+    @ApiParam({
+        name: 'size',
+        enum: ['small', 'medium', 'large'], // Допустимые значения
+        example: 'medium',
+    })
+    @ApiBearerAuth()
+    async getThumbnail(
+        @UserId() userId: string,
+        @Param('fileId') fileId: string,
+        @Param('size') size: 'small' | 'medium' | 'large',
+        @Res() res: Response,
+    ) {
+        return this.filesService.getThumbnail(userId, fileId, size, res);
     }
 }
