@@ -203,13 +203,7 @@ export class FilesService {
                             ? path.join(directory.path, fileName)
                             : path.join(userId, 'files', fileName);
 
-                        const thumbnailPaths = await generateThumbnails(
-                            userId,
-                            filePath,
-                            this.config,
-                        );
-
-                        await this.prisma.file.create({
+                        const file = await this.prisma.file.create({
                             data: {
                                 name: fileName,
                                 userId: userId,
@@ -217,17 +211,26 @@ export class FilesService {
                                 size: fileSize,
                                 mimeType: fileInfo.mimeType,
                                 path: filePath,
-                                thumbnailLarge: thumbnailPaths
-                                    ? thumbnailPaths[0]
-                                    : null,
-                                thumbnailMedium: thumbnailPaths
-                                    ? thumbnailPaths[1]
-                                    : null,
-                                thumbnailSmall: thumbnailPaths
-                                    ? thumbnailPaths[2]
-                                    : null,
                             },
                         });
+
+                        const thumbnailPaths = await generateThumbnails(
+                            userId,
+                            file.id,
+                            filePath,
+                            this.config,
+                        );
+
+                        if (thumbnailPaths) {
+                            await this.prisma.file.update({
+                                where: { id: file.id },
+                                data: {
+                                    thumbnailLarge: thumbnailPaths[0],
+                                    thumbnailMedium: thumbnailPaths[1],
+                                    thumbnailSmall: thumbnailPaths[2],
+                                },
+                            });
+                        }
 
                         await this.prisma.user.update({
                             where: { id: userId },

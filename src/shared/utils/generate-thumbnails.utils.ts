@@ -4,6 +4,7 @@ import * as sharp from 'sharp';
 
 export const generateThumbnails = async (
     userId: string,
+    fileId: string,
     imagePath: string,
     config: ConfigService,
 ) => {
@@ -26,7 +27,7 @@ export const generateThumbnails = async (
                 config.getOrThrow<string>('STORAGE_PATH'),
                 userId,
                 'thumbnails',
-                `${size.name}_${path.basename(imagePath)}`,
+                `${size.name}_${fileId}_${path.basename(imagePath)}`,
             );
 
             await sharp(fullImagePath).resize(size.width).toFile(thumbnailPath);
