@@ -11,6 +11,7 @@ import * as fs from 'fs';
 import * as path from 'path';
 
 import { PrismaService } from '@/core/prisma/prisma.service';
+import { generateThumbnails } from '@/shared/utils/generate-thumbnails.utils';
 
 import { File } from '../../../prisma/generated';
 
@@ -187,6 +188,16 @@ export class FilesService {
             });
 
             writeStream.on('finish', async () => {
+                const filePath = directoryId
+                    ? path.join(directory.path, fileName)
+                    : path.join(userId, 'files', fileName);
+
+                const thumbnailPaths = await generateThumbnails(
+                    userId,
+                    filePath,
+                    this.config,
+                );
+
                 await this.prisma.file.create({
                     data: {
                         name: fileName,
@@ -194,9 +205,16 @@ export class FilesService {
                         directoryId: directoryId ?? null,
                         size: fileSize,
                         mimeType: fileInfo.mimeType,
-                        path: directoryId
-                            ? path.join(directory.path, fileName)
-                            : path.join(userId, 'files', fileName),
+                        path: filePath,
+                        thumbnailLarge: thumbnailPaths
+                            ? thumbnailPaths[0]
+                            : null,
+                        thumbnailMedium: thumbnailPaths
+                            ? thumbnailPaths[1]
+                            : null,
+                        thumbnailSmall: thumbnailPaths
+                            ? thumbnailPaths[2]
+                            : null,
                     },
                 });
 
