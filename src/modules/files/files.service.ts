@@ -34,7 +34,7 @@ export class FilesService {
         userId: string,
         folderName: string,
         directoryId?: string,
-    ): Promise<string> {
+    ): Promise<{ status: string }> {
         const isFreeName = await this.prisma.file.findFirst({
             where: {
                 name: folderName,
@@ -48,7 +48,7 @@ export class FilesService {
         }
 
         let directory: File;
-        let userFolder: string;
+        let folderPath: string;
 
         if (directoryId) {
             directory = await this.prisma.file.findUnique({
@@ -61,13 +61,13 @@ export class FilesService {
                 );
             }
 
-            userFolder = path.join(
+            folderPath = path.join(
                 this.config.getOrThrow<string>('STORAGE_PATH'),
                 directory.path,
                 folderName,
             );
         } else {
-            userFolder = path.join(
+            folderPath = path.join(
                 this.config.getOrThrow<string>('STORAGE_PATH'),
                 userId,
                 'files',
@@ -75,8 +75,8 @@ export class FilesService {
             );
         }
 
-        if (!fs.existsSync(userFolder)) {
-            fs.mkdirSync(userFolder, { recursive: true });
+        if (!fs.existsSync(folderPath)) {
+            fs.mkdirSync(folderPath, { recursive: true });
         }
 
         await this.prisma.file.create({
@@ -92,7 +92,7 @@ export class FilesService {
             },
         });
 
-        return userFolder;
+        return { status: 'Folder created successfully' };
     }
 
     async upload(
