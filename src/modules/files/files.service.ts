@@ -44,11 +44,14 @@ export class FilesService {
         });
 
         if (isFreeName) {
-            throw new ConflictException('Folder already exists');
+            throw new ConflictException('Folder name already exists');
         }
 
+        let directory: File;
+        let userFolder: string;
+
         if (directoryId) {
-            const directory = await this.prisma.file.findUnique({
+            directory = await this.prisma.file.findUnique({
                 where: { id: directoryId },
             });
 
@@ -58,51 +61,38 @@ export class FilesService {
                 );
             }
 
-            const userFolder = path.join(
+            userFolder = path.join(
                 this.config.getOrThrow<string>('STORAGE_PATH'),
                 directory.path,
                 folderName,
             );
-
-            if (!fs.existsSync(userFolder)) {
-                fs.mkdirSync(userFolder, { recursive: true });
-            }
-
-            await this.prisma.file.create({
-                data: {
-                    name: folderName,
-                    userId: userId,
-                    directoryId: directoryId,
-                    size: 0,
-                    path: path.join(directory.path, folderName),
-                    isDirectory: true,
-                },
-            });
         } else {
-            const userFolder = path.join(
+            userFolder = path.join(
                 this.config.getOrThrow<string>('STORAGE_PATH'),
                 userId,
                 'files',
                 folderName,
             );
-
-            if (!fs.existsSync(userFolder)) {
-                fs.mkdirSync(userFolder, { recursive: true });
-            }
-
-            await this.prisma.file.create({
-                data: {
-                    name: folderName,
-                    userId: userId,
-                    directoryId: null,
-                    size: 0,
-                    path: path.join(userId, 'files', folderName),
-                    isDirectory: true,
-                },
-            });
-
-            return userFolder;
         }
+
+        if (!fs.existsSync(userFolder)) {
+            fs.mkdirSync(userFolder, { recursive: true });
+        }
+
+        await this.prisma.file.create({
+            data: {
+                name: folderName,
+                userId: userId,
+                directoryId: directoryId ?? null,
+                size: 0,
+                path: directoryId
+                    ? path.join(directory.path, folderName)
+                    : path.join(userId, 'files', folderName),
+                isDirectory: true,
+            },
+        });
+
+        return userFolder;
     }
 
     async upload(
