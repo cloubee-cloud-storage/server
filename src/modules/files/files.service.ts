@@ -36,7 +36,7 @@ export class FilesService {
         folderName: string,
         directoryId?: string,
     ): Promise<{ status: string }> {
-        const isFreeName = await this.prisma.file.findFirst({
+        const isNotFreeName = await this.prisma.file.findFirst({
             where: {
                 name: folderName,
                 isDirectory: true,
@@ -44,7 +44,7 @@ export class FilesService {
             },
         });
 
-        if (isFreeName) {
+        if (isNotFreeName) {
             throw new ConflictException('Folder name already exists');
         }
 
@@ -107,7 +107,7 @@ export class FilesService {
         let uploadDir: string;
         let directory: File;
         let fileName: string;
-        let fileSize: number = 0;
+        let fileSize = 0;
 
         const user = await this.prisma.user.findUnique({
             where: { id: userId },
@@ -142,109 +142,141 @@ export class FilesService {
 
         if (!fs.existsSync(uploadDir)) {
             return res.status(HttpStatus.INTERNAL_SERVER_ERROR).json({
-                message: 'Directory not found or is not a directory',
+                message: 'Upload directory not found.',
             });
         }
 
+        let uploadError = false;
+
         busboy.on('file', async (_, file, fileInfo) => {
-            fileName = fileInfo.filename;
+            try {
+                fileName = fileInfo.filename;
 
-            const isFreeName = await this.prisma.file.findFirst({
-                where: {
-                    name: fileName,
-                    isDirectory: false,
-                    directoryId: directoryId ?? null,
-                },
-            });
-
-            if (isFreeName) {
-                res.status(HttpStatus.INTERNAL_SERVER_ERROR).json({
-                    message: 'The file name is already taken',
+                const isNotFreeName = await this.prisma.file.findFirst({
+                    where: {
+                        name: fileName,
+                        isDirectory: false,
+                        directoryId: directoryId ?? null,
+                    },
                 });
-                return;
-            }
 
-            file.on('data', chunk => {
-                fileSize += chunk.length;
-
-                if (fileSize > remainingSpace) {
+                if (isNotFreeName) {
                     file.resume();
+                    uploadError = true;
+
                     return res.status(HttpStatus.BAD_REQUEST).json({
-                        message: 'Not enough disk space available.',
+                        message: 'The file name is already taken',
                     });
                 }
-            });
 
-            const saveTo = path.join(uploadDir, fileName);
-            const writeStream = fs.createWriteStream(saveTo);
+                file.on('data', chunk => {
+                    fileSize += chunk.length;
+                    if (fileSize > remainingSpace) {
+                        file.resume();
+                        uploadError = true;
 
-            file.pipe(writeStream);
+                        return res.status(HttpStatus.BAD_REQUEST).json({
+                            message: 'Not enough disk space available.',
+                        });
+                    }
+                });
 
-            file.on('error', () => {
-                writeStream.destroy();
+                const saveTo = path.join(uploadDir, fileName);
+                const writeStream = fs.createWriteStream(saveTo);
+
+                file.pipe(writeStream);
+
+                file.on('error', () => {
+                    writeStream.destroy();
+                    uploadError = true;
+
+                    return res.status(HttpStatus.INTERNAL_SERVER_ERROR).json({
+                        message: 'Error uploading file.',
+                    });
+                });
+
+                writeStream.on('finish', async () => {
+                    try {
+                        if (uploadError) return;
+
+                        const filePath = directoryId
+                            ? path.join(directory.path, fileName)
+                            : path.join(userId, 'files', fileName);
+
+                        const thumbnailPaths = await generateThumbnails(
+                            userId,
+                            filePath,
+                            this.config,
+                        );
+
+                        await this.prisma.file.create({
+                            data: {
+                                name: fileName,
+                                userId: userId,
+                                directoryId: directoryId ?? null,
+                                size: fileSize,
+                                mimeType: fileInfo.mimeType,
+                                path: filePath,
+                                thumbnailLarge: thumbnailPaths
+                                    ? thumbnailPaths[0]
+                                    : null,
+                                thumbnailMedium: thumbnailPaths
+                                    ? thumbnailPaths[1]
+                                    : null,
+                                thumbnailSmall: thumbnailPaths
+                                    ? thumbnailPaths[2]
+                                    : null,
+                            },
+                        });
+
+                        await this.prisma.user.update({
+                            where: { id: userId },
+                            data: {
+                                usedQuota: usedSpace + fileSize,
+                            },
+                        });
+                    } catch (dbError) {
+                        uploadError = true;
+                        return res
+                            .status(HttpStatus.INTERNAL_SERVER_ERROR)
+                            .json({
+                                message:
+                                    'Database error while saving file metadata.',
+                                error: dbError,
+                            });
+                    }
+                });
+
+                writeStream.on('error', () => {
+                    uploadError = true;
+                    return res.status(HttpStatus.INTERNAL_SERVER_ERROR).json({
+                        message: 'Error writing file.',
+                    });
+                });
+            } catch (error) {
+                uploadError = true;
                 return res.status(HttpStatus.INTERNAL_SERVER_ERROR).json({
-                    message: 'Error uploading file.',
+                    message: 'Error processing file upload.',
+                    error: error,
                 });
-            });
-
-            writeStream.on('finish', async () => {
-                const filePath = directoryId
-                    ? path.join(directory.path, fileName)
-                    : path.join(userId, 'files', fileName);
-
-                const thumbnailPaths = await generateThumbnails(
-                    userId,
-                    filePath,
-                    this.config,
-                );
-
-                await this.prisma.file.create({
-                    data: {
-                        name: fileName,
-                        userId: userId,
-                        directoryId: directoryId ?? null,
-                        size: fileSize,
-                        mimeType: fileInfo.mimeType,
-                        path: filePath,
-                        thumbnailLarge: thumbnailPaths
-                            ? thumbnailPaths[0]
-                            : null,
-                        thumbnailMedium: thumbnailPaths
-                            ? thumbnailPaths[1]
-                            : null,
-                        thumbnailSmall: thumbnailPaths
-                            ? thumbnailPaths[2]
-                            : null,
-                    },
-                });
-
-                await this.prisma.user.update({
-                    where: { id: userId },
-                    data: {
-                        usedQuota: usedSpace + fileSize,
-                    },
-                });
-            });
-
-            writeStream.on('error', () => {
-                return res.status(HttpStatus.INTERNAL_SERVER_ERROR).json({
-                    message: 'Error writing file.',
-                });
-            });
+            }
         });
 
         busboy.on('finish', () => {
-            res.status(HttpStatus.OK).json({
-                message: 'File uploaded successfully.',
-                file: fileName,
-                size: fileSize,
-                path: uploadDir,
-            });
+            if (!uploadError) {
+                res.status(HttpStatus.OK).json({
+                    message: 'File uploaded successfully.',
+                    file: fileName,
+                    size: fileSize,
+                    path: uploadDir,
+                });
+            }
         });
 
-        busboy.on('error', () => {
+        busboy.on('error', error => {
             res.status(HttpStatus.INTERNAL_SERVER_ERROR).json({
                 message: 'Error processing request.',
+                error: error,
             });
         });
 
