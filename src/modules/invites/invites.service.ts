@@ -41,13 +41,13 @@ export class InvitesService {
     }
 
     async checkInvite(token: string) {
-        const isInvite = await this.prisma.invite.findFirst({
+        const invite = await this.prisma.invite.findFirst({
             where: {
                 token: token,
             },
         });
 
-        return !!isInvite;
+        return !!invite;
     }
 
     async deleteInvite(id: string) {
