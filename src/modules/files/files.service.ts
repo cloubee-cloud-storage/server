@@ -286,6 +286,31 @@ export class FilesService {
         req.pipe(busboy);
     }
 
+    async getFile(userId: string, fileId: string, res: Response) {
+        const file = await this.prisma.file.findUnique({
+            where: { id: fileId, userId: userId },
+        });
+
+        if (!file) {
+            return res.status(HttpStatus.NOT_FOUND).json({
+                message: 'File not found',
+            });
+        }
+
+        const filePath = path.join(
+            this.config.getOrThrow<string>('STORAGE_PATH'),
+            file.path,
+        );
+
+        if (!fs.existsSync(filePath)) {
+            return res.status(HttpStatus.NOT_FOUND).json({
+                message: 'File not found',
+            });
+        }
+
+        res.sendFile(filePath);
+    }
+
     async getThumbnail(
         userId: string,
         fileId: string,

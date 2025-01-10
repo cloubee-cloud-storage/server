@@ -66,6 +66,16 @@ export class FilesController {
         return this.filesService.upload(userId, req, res, directoryId);
     }
 
+    @Get(':fileId')
+    @ApiBearerAuth()
+    async getFile(
+        @UserId() userId: string,
+        @Param('fileId') fileId: string,
+        @Res() res: Response,
+    ) {
+        return this.filesService.getFile(userId, fileId, res);
+    }
+
     @Get(':fileId/thumbnail/:size')
     @ApiParam({
         name: 'size',
