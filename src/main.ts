@@ -2,6 +2,8 @@ import { Logger, ValidationPipe } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { NestFactory } from '@nestjs/core';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
+import { apiReference } from '@scalar/nestjs-api-reference';
+import * as process from 'node:process';
 
 import { CoreModule } from './core/core.module';
 
@@ -25,10 +27,35 @@ async function bootstrap() {
         .addBearerAuth()
         .build();
 
-    const documentFactory = () => SwaggerModule.createDocument(app, swagger);
+    const documentFactory = SwaggerModule.createDocument(app, swagger);
 
-    SwaggerModule.setup('swagger', app, documentFactory);
+    app.use(
+        '/reference',
+        apiReference({
+            layout: 'classic',
+            theme: 'default',
+            metaData: {
+                title: 'Cloubee API',
+            },
+            defaultHttpClient: {
+                targetKey: 'js',
+                clientKey: 'axios',
+            },
+            authentication: {
+                preferredSecurityScheme: 'bearer',
+                http: {
+                    bearer: {
+                        token: process.env.SCALAR_BEARER,
+                    },
+                },
+            },
+            spec: {
+                content: documentFactory,
+            },
+        }),
+    );
 
     await app.listen(config.getOrThrow<number>('APPLICATION_PORT'));
 }
+
 bootstrap();
