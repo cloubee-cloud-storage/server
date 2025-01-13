@@ -1,4 +1,5 @@
 import {
+    BadRequestException,
     ConflictException,
     HttpStatus,
     Injectable,
@@ -38,14 +39,15 @@ export class FilesService {
     ): Promise<{ status: string }> {
         const isNotFreeName = await this.prisma.file.findFirst({
             where: {
+                userId: userId,
                 name: folderName,
                 isDirectory: true,
-                directoryId: directoryId,
+                directoryId: directoryId ?? null,
             },
         });
 
         if (isNotFreeName) {
-            throw new ConflictException('Folder name already exists');
+            throw new ConflictException('Folder name already exists.');
         }
 
         let directory: File;
@@ -53,13 +55,15 @@ export class FilesService {
 
         if (directoryId) {
             directory = await this.prisma.file.findUnique({
-                where: { id: directoryId },
+                where: { id: directoryId, userId: userId },
             });
 
-            if (!directory || !directory.isDirectory) {
-                throw new NotFoundException(
-                    'Directory not found or is not a folder',
-                );
+            if (!directory) {
+                throw new NotFoundException('Directory not found.');
+            }
+
+            if (!directory.isDirectory) {
+                throw new BadRequestException('Is not a folder.');
             }
 
             folderPath = path.join(
@@ -93,7 +97,7 @@ export class FilesService {
             },
         });
 
-        return { status: 'Folder created successfully' };
+        return { status: 'Folder created successfully.' };
     }
 
     async upload(
@@ -119,12 +123,18 @@ export class FilesService {
 
         if (directoryId) {
             directory = await this.prisma.file.findUnique({
-                where: { id: directoryId },
+                where: { id: directoryId, userId: userId },
             });
 
-            if (!directory || !directory.isDirectory) {
-                return res.status(HttpStatus.INTERNAL_SERVER_ERROR).json({
-                    message: 'Directory not found or is not a directory',
+            if (!directory) {
+                return res.status(HttpStatus.NOT_FOUND).json({
+                    message: 'Directory not found.',
+                });
+            }
+
+            if (!directory.isDirectory) {
+                return res.status(HttpStatus.BAD_REQUEST).json({
+                    message: 'Is not a directory.',
                 });
             }
 
@@ -141,7 +151,7 @@ export class FilesService {
         }
 
         if (!fs.existsSync(uploadDir)) {
-            return res.status(HttpStatus.INTERNAL_SERVER_ERROR).json({
+            return res.status(HttpStatus.NOT_FOUND).json({
                 message: 'Upload directory not found.',
             });
         }
@@ -154,6 +164,7 @@ export class FilesService {
 
                 const isNotFreeName = await this.prisma.file.findFirst({
                     where: {
+                        userId: userId,
                         name: fileName,
                         isDirectory: false,
                         directoryId: directoryId ?? null,
@@ -286,9 +297,14 @@ export class FilesService {
         req.pipe(busboy);
     }
 
-    async getFile(userId: string, fileId: string, res: Response) {
+    async getFile(
+        userId: string,
+        fileId: string,
+        res: Response,
+        filePathFunc?: (file: File) => string,
+    ) {
         const file = await this.prisma.file.findUnique({
-            where: { id: fileId, userId: userId },
+            where: { id: fileId, userId },
         });
 
         if (!file) {
@@ -297,10 +313,12 @@ export class FilesService {
             });
         }
 
-        const filePath = path.join(
-            this.config.getOrThrow<string>('STORAGE_PATH'),
-            file.path,
-        );
+        const filePath = filePathFunc
+            ? filePathFunc(file)
+            : path.join(
+                  this.config.getOrThrow<string>('STORAGE_PATH'),
+                  file.path,
+              );
 
         if (!fs.existsSync(filePath)) {
             return res.status(HttpStatus.NOT_FOUND).json({
@@ -317,33 +335,17 @@ export class FilesService {
         size: 'small' | 'medium' | 'large',
         res: Response,
     ) {
-        const file = await this.prisma.file.findUnique({
-            where: { id: fileId, userId: userId },
+        return this.getFile(userId, fileId, res, file => {
+            const thumbnailPath = {
+                small: file.thumbnailSmall,
+                medium: file.thumbnailMedium,
+                large: file.thumbnailLarge,
+            }[size];
+
+            return path.join(
+                this.config.getOrThrow<string>('STORAGE_PATH'),
+                thumbnailPath,
+            );
         });
-
-        if (!file) {
-            return res.status(HttpStatus.NOT_FOUND).json({
-                message: 'File not found',
-            });
-        }
-
-        const thumbnailSize = {
-            small: file.thumbnailSmall,
-            medium: file.thumbnailMedium,
-            large: file.thumbnailLarge,
-        };
-
-        const filePath = path.join(
-            this.config.getOrThrow<string>('STORAGE_PATH'),
-            thumbnailSize[size],
-        );
-
-        if (!fs.existsSync(filePath)) {
-            return res.status(HttpStatus.NOT_FOUND).json({
-                message: 'File not found',
-            });
-        }
-
-        res.sendFile(filePath);
     }
 }
