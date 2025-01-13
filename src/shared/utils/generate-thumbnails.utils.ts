@@ -27,7 +27,7 @@ export const generateThumbnails = async (
                 config.getOrThrow<string>('STORAGE_PATH'),
                 userId,
                 'thumbnails',
-                `${size.name}_${fileId}_${path.basename(imagePath)}`,
+                `${size.name}_${fileId}${path.extname(imagePath)}`,
             );
 
             await sharp(fullImagePath).resize(size.width).toFile(thumbnailPath);
@@ -36,7 +36,7 @@ export const generateThumbnails = async (
                 path.join(
                     userId,
                     'thumbnails',
-                    `${size.name}_${fileId}_${path.basename(imagePath)}`,
+                    `${size.name}_${fileId}${path.extname(imagePath)}`,
                 ),
             );
         }
