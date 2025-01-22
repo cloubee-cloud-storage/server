@@ -1,6 +1,5 @@
 import {
     BadRequestException,
-    ConflictException,
     HttpStatus,
     Injectable,
     NotFoundException,
@@ -36,18 +35,17 @@ export class FilesService {
         userId: string,
         folderName: string,
         directoryId?: string,
-    ): Promise<{ status: string }> {
+    ): Promise<{ message: string }> {
         const isNotFreeName = await this.prisma.file.findFirst({
             where: {
                 userId: userId,
                 name: folderName,
-                isDirectory: true,
                 directoryId: directoryId ?? null,
             },
         });
 
         if (isNotFreeName) {
-            throw new ConflictException('Folder name already exists.');
+            throw new BadRequestException('Name already exists.');
         }
 
         let directory: File;
@@ -97,7 +95,7 @@ export class FilesService {
             },
         });
 
-        return { status: 'Folder created successfully.' };
+        return { message: 'Folder created successfully.' };
     }
 
     async upload(
@@ -166,7 +164,6 @@ export class FilesService {
                     where: {
                         userId: userId,
                         name: fileName,
-                        isDirectory: false,
                         directoryId: directoryId ?? null,
                     },
                 });
@@ -304,7 +301,7 @@ export class FilesService {
         filePathFunc?: (file: File) => string,
     ) {
         const file = await this.prisma.file.findUnique({
-            where: { id: fileId, userId },
+            where: { id: fileId, userId: userId },
         });
 
         if (!file) {
@@ -347,5 +344,120 @@ export class FilesService {
                 thumbnailPath,
             );
         });
+    }
+
+    async rename(userId: string, fileId: string, name: string) {
+        const file = await this.prisma.file
+            .findUniqueOrThrow({
+                where: { id: fileId },
+            })
+            .catch(() => {
+                throw new NotFoundException('File or directory not found');
+            });
+
+        const oldPath: string = path.join(
+            this.config.getOrThrow<string>('STORAGE_PATH'),
+            file.path,
+        );
+
+        if (!file.isDirectory) {
+            const newName = `${name}${path.extname(file.name)}`;
+            const newPath = path.join(path.dirname(file.path), newName);
+
+            const isNotFreeName = await this.prisma.file.findFirst({
+                where: {
+                    name: newName,
+                    directoryId: file.directoryId,
+                    userId: userId,
+                    NOT: {
+                        id: file.id,
+                    },
+                },
+            });
+
+            if (isNotFreeName) {
+                throw new BadRequestException('Name already exists.');
+            }
+
+            fs.renameSync(
+                oldPath,
+                path.join(
+                    this.config.getOrThrow<string>('STORAGE_PATH'),
+                    newPath,
+                ),
+            );
+
+            await this.prisma.file.update({
+                where: {
+                    id: file.id,
+                },
+                data: {
+                    name: newName,
+                    path: newPath,
+                },
+            });
+
+            return { message: 'File renamed successfully.' };
+        } else {
+            const newPath = path.join(path.dirname(file.path), name);
+
+            const isNotFreeName = await this.prisma.file.findFirst({
+                where: {
+                    name: name,
+                    directoryId: file.directoryId,
+                    userId: userId,
+                    NOT: {
+                        id: file.id,
+                    },
+                },
+            });
+
+            if (isNotFreeName) {
+                throw new BadRequestException('Name already exists.');
+            }
+
+            const filesInDirectory = await this.prisma.file.findMany({
+                where: {
+                    directoryId: file.id,
+                },
+            });
+
+            fs.renameSync(
+                oldPath,
+                path.join(
+                    this.config.getOrThrow<string>('STORAGE_PATH'),
+                    newPath,
+                ),
+            );
+
+            await this.prisma.file.update({
+                where: {
+                    id: file.id,
+                },
+                data: {
+                    name: name,
+                    path: newPath,
+                },
+            });
+
+            for (const file of filesInDirectory) {
+                const newFilePath = path.join(
+                    path.dirname(path.dirname(file.path)),
+                    name,
+                    path.basename(file.path),
+                );
+
+                await this.prisma.file.update({
+                    where: {
+                        id: file.id,
+                    },
+                    data: {
+                        path: newFilePath,
+                    },
+                });
+            }
+
+            return { message: 'Directory renamed successfully.' };
+        }
     }
 }

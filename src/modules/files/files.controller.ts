@@ -91,4 +91,14 @@ export class FilesController {
     ) {
         return this.filesService.getThumbnail(userId, fileId, size, res);
     }
+
+    @Post('rename/:fileId/:fileName')
+    @ApiBearerAuth()
+    async rename(
+        @UserId() userId: string,
+        @Param('fileId') fileId: string,
+        @Param('fileName') fileName: string,
+    ) {
+        return this.filesService.rename(userId, fileId, fileName);
+    }
 }
