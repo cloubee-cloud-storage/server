@@ -399,6 +399,7 @@ export class FilesService {
 
             return { message: 'File renamed successfully.' };
         } else {
+            const oldPath = path.join(path.join(file.path));
             const newPath = path.join(path.dirname(file.path), name);
 
             const isNotFreeName = await this.prisma.file.findFirst({
@@ -422,14 +423,6 @@ export class FilesService {
                 },
             });
 
-            fs.renameSync(
-                oldPath,
-                path.join(
-                    this.config.getOrThrow<string>('STORAGE_PATH'),
-                    newPath,
-                ),
-            );
-
             await this.prisma.file.update({
                 where: {
                     id: file.id,
@@ -440,21 +433,64 @@ export class FilesService {
                 },
             });
 
-            for (const file of filesInDirectory) {
-                const newFilePath = path.join(
-                    path.dirname(path.dirname(file.path)),
-                    name,
-                    path.basename(file.path),
-                );
+            const renameFilePaths = async (filesInDir: File[]) => {
+                for (const file of filesInDir) {
+                    const newFilePath = path.join(
+                        newPath,
+                        file.path
+                            .split('\\')
+                            .slice(oldPath.split('\\').length)
+                            .join('\\'),
+                    );
 
-                await this.prisma.file.update({
-                    where: {
-                        id: file.id,
-                    },
-                    data: {
-                        path: newFilePath,
-                    },
-                });
+                    if (file.isDirectory) {
+                        const filesInDirectory =
+                            await this.prisma.file.findMany({
+                                where: {
+                                    directoryId: file.id,
+                                },
+                            });
+
+                        await this.prisma.file.update({
+                            where: {
+                                id: file.id,
+                            },
+                            data: {
+                                path: newFilePath,
+                            },
+                        });
+
+                        await renameFilePaths(filesInDirectory);
+                    }
+
+                    await this.prisma.file.update({
+                        where: {
+                            id: file.id,
+                        },
+                        data: {
+                            path: newFilePath,
+                        },
+                    });
+                }
+            };
+
+            await renameFilePaths(filesInDirectory).catch(() => {
+                throw new BadRequestException('Renaming error');
+            });
+
+            try {
+                fs.renameSync(
+                    path.join(
+                        this.config.getOrThrow<string>('STORAGE_PATH'),
+                        oldPath,
+                    ),
+                    path.join(
+                        this.config.getOrThrow<string>('STORAGE_PATH'),
+                        newPath,
+                    ),
+                );
+            } catch {
+                throw new BadRequestException('Renaming error');
             }
 
             return { message: 'Directory renamed successfully.' };
