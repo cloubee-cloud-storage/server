@@ -438,9 +438,9 @@ export class FilesService {
                     const newFilePath = path.join(
                         newPath,
                         file.path
-                            .split('\\')
-                            .slice(oldPath.split('\\').length)
-                            .join('\\'),
+                            .split(path.sep)
+                            .slice(oldPath.split(path.sep).length)
+                            .join(path.sep),
                     );
 
                     if (file.isDirectory) {
