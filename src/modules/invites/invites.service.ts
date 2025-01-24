@@ -8,7 +8,7 @@ import { Role } from '../../../prisma/generated';
 @Injectable()
 export class InvitesService {
     constructor(private readonly prisma: PrismaService) {}
-    async createInvite(email: string, role: Role, storageQuota: number) {
+    public async createInvite(email: string, role: Role, storageQuota: number) {
         const existingInvite = await this.prisma.invite.findFirst({
             where: { email: email },
         });
@@ -36,11 +36,11 @@ export class InvitesService {
         return token;
     }
 
-    async getInvites() {
+    public async getInvites() {
         return this.prisma.invite.findMany();
     }
 
-    async checkInvite(token: string) {
+    public async checkInvite(token: string) {
         const invite = await this.prisma.invite.findFirst({
             where: {
                 token: token,
@@ -50,7 +50,7 @@ export class InvitesService {
         return !!invite;
     }
 
-    async deleteInvite(id: string) {
+    public async deleteInvite(id: string) {
         return this.prisma.invite.delete({
             where: {
                 id: id,

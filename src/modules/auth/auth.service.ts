@@ -22,7 +22,7 @@ export class AuthService {
         private readonly config: ConfigService,
     ) {}
 
-    async login(email: string, password: string): Promise<AuthEntity> {
+    public async login(email: string, password: string): Promise<AuthEntity> {
         const user = await this.prisma.user.findUnique({
             where: { email: email },
         });
@@ -44,7 +44,7 @@ export class AuthService {
         };
     }
 
-    async register(inviteToken: string, name: string, password: string) {
+    public async register(inviteToken: string, name: string, password: string) {
         try {
             const invite = await this.prisma.invite.findUnique({
                 where: { token: inviteToken },

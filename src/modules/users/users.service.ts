@@ -9,11 +9,11 @@ import { Role } from '../../../prisma/generated';
 export class UsersService {
     constructor(private readonly prisma: PrismaService) {}
 
-    async findAll() {
+    public async findAll() {
         return this.prisma.user.findMany();
     }
 
-    async findById(id: string) {
+    public async findById(id: string) {
         const user = await this.prisma.user.findUnique({
             where: {
                 id: id,
@@ -27,7 +27,11 @@ export class UsersService {
         return user;
     }
 
-    async updateCurrentUser(id: string, name?: string, password?: string) {
+    public async updateCurrentUser(
+        id: string,
+        name?: string,
+        password?: string,
+    ) {
         if (!name && !password) {
             throw new InternalServerErrorException('No changes provided');
         }
@@ -54,7 +58,11 @@ export class UsersService {
         }
     }
 
-    async updateUserByAdmin(id: string, role?: Role, storageQuota?: number) {
+    public async updateUserByAdmin(
+        id: string,
+        role?: Role,
+        storageQuota?: number,
+    ) {
         if (!role && !storageQuota) {
             throw new InternalServerErrorException('No changes provided');
         }

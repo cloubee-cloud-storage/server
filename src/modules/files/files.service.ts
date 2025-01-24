@@ -23,7 +23,7 @@ export class FilesService {
         private readonly config: ConfigService,
     ) {}
 
-    async getAll(userId: string, directoryId?: string): Promise<File[]> {
+    public async getAll(userId: string, directoryId?: string): Promise<File[]> {
         if (directoryId) {
             const dir = await this.prisma.file
                 .findUniqueOrThrow({
@@ -53,7 +53,7 @@ export class FilesService {
         });
     }
 
-    async mkdir(
+    public async mkdir(
         userId: string,
         folderName: string,
         directoryId?: string,
@@ -120,7 +120,7 @@ export class FilesService {
         return { message: 'Folder created successfully.' };
     }
 
-    async upload(
+    public async upload(
         userId: string,
         req: Request,
         res: Response,
@@ -316,7 +316,7 @@ export class FilesService {
         req.pipe(busboy);
     }
 
-    async getFile(
+    public async getFile(
         userId: string,
         fileId: string,
         res: Response,
@@ -348,7 +348,7 @@ export class FilesService {
         res.sendFile(filePath);
     }
 
-    async getThumbnail(
+    public async getThumbnail(
         userId: string,
         fileId: string,
         size: 'small' | 'medium' | 'large',
@@ -470,7 +470,7 @@ export class FilesService {
         }
     }
 
-    async moveToTrash(userId: string, fileId: string) {
+    public async moveToTrash(userId: string, fileId: string) {
         try {
             await this.prisma.file.update({
                 where: { id: fileId, userId: userId },
@@ -485,7 +485,7 @@ export class FilesService {
         }
     }
 
-    async getTrashFiles(userId: string) {
+    public async getTrashFiles(userId: string) {
         return this.prisma.file.findMany({
             where: {
                 userId: userId,
@@ -494,7 +494,7 @@ export class FilesService {
         });
     }
 
-    async moveFromTrash(userId: string, fileId: string) {
+    public async moveFromTrash(userId: string, fileId: string) {
         try {
             await this.prisma.file.update({
                 where: { id: fileId, userId: userId, isDeleted: true },
