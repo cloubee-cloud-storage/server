@@ -2,6 +2,7 @@ import {
     BadRequestException,
     HttpStatus,
     Injectable,
+    InternalServerErrorException,
     NotFoundException,
 } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
@@ -23,10 +24,31 @@ export class FilesService {
     ) {}
 
     async getAll(userId: string, directoryId?: string): Promise<File[]> {
+        if (directoryId) {
+            const dir = await this.prisma.file
+                .findUniqueOrThrow({
+                    where: {
+                        id: directoryId,
+                        userId: userId,
+                        isDirectory: true,
+                    },
+                })
+                .catch(() => {
+                    throw new NotFoundException(
+                        'Directory not found or is not directory',
+                    );
+                });
+
+            if (dir.isDeleted) {
+                throw new NotFoundException('Directory not found');
+            }
+        }
+
         return this.prisma.file.findMany({
             where: {
                 userId: userId,
                 directoryId: directoryId ?? null,
+                isDeleted: false,
             },
         });
     }
@@ -53,7 +75,7 @@ export class FilesService {
 
         if (directoryId) {
             directory = await this.prisma.file.findUnique({
-                where: { id: directoryId, userId: userId },
+                where: { id: directoryId, userId: userId, isDeleted: false },
             });
 
             if (!directory) {
@@ -495,5 +517,113 @@ export class FilesService {
 
             return { message: 'Directory renamed successfully.' };
         }
+    }
+
+    async moveToTrash(userId: string, fileId: string) {
+        try {
+            await this.prisma.file.update({
+                where: { id: fileId, userId: userId },
+                data: {
+                    isDeleted: true,
+                },
+            });
+
+            return { message: 'File moved to trash successfully' };
+        } catch {
+            throw new NotFoundException('Error transferring file to trash');
+        }
+    }
+
+    async getTrashFiles(userId: string) {
+        return this.prisma.file.findMany({
+            where: {
+                userId: userId,
+                isDeleted: true,
+            },
+        });
+    }
+
+    async moveFromTrash(userId: string, fileId: string) {
+        try {
+            await this.prisma.file.update({
+                where: { id: fileId, userId: userId, isDeleted: true },
+                data: { isDeleted: false },
+            });
+
+            return { message: 'File restored successfully' };
+        } catch {
+            throw new BadRequestException('File recovery error');
+        }
+    }
+
+    public async deletePermanently(userId: string, fileId: string) {
+        try {
+            const file = await this.prisma.file.findUniqueOrThrow({
+                where: { id: fileId, userId, isDeleted: true },
+            });
+
+            const filePath = path.join(
+                this.config.getOrThrow<string>('STORAGE_PATH'),
+                file.path,
+            );
+
+            if (!file.isDirectory) {
+                await this.deleteFile(filePath);
+                await this.prisma.file.delete({ where: { id: fileId } });
+                return { message: 'File deleted successfully' };
+            }
+
+            const allUserFiles = await this.prisma.file.findMany({
+                where: { userId },
+            });
+
+            const fileIds = await this.getNestedFiles(fileId, allUserFiles);
+            fileIds.push(file.id);
+
+            await this.deleteDirectory(filePath);
+            await this.prisma.file.deleteMany({
+                where: { id: { in: fileIds } },
+            });
+
+            return { message: 'Directory deleted successfully' };
+        } catch (error) {
+            if (error instanceof NotFoundException) {
+                throw error;
+            }
+            throw new InternalServerErrorException('Unexpected error occurred');
+        }
+    }
+
+    private async deleteFile(filePath: string) {
+        try {
+            await fs.promises.rm(filePath);
+        } catch {
+            throw new InternalServerErrorException('Error deleting file');
+        }
+    }
+
+    private async deleteDirectory(dirPath: string) {
+        try {
+            await fs.promises.rm(dirPath, { recursive: true });
+        } catch {
+            throw new InternalServerErrorException('Error deleting directory');
+        }
+    }
+
+    private async getNestedFiles(
+        dirId: string,
+        allFiles: File[],
+    ): Promise<string[]> {
+        const nestedFiles = allFiles.filter(file => file.directoryId === dirId);
+        const fileIds: string[] = nestedFiles.map(file => file.id);
+
+        for (const file of nestedFiles) {
+            if (file.isDirectory) {
+                const nestedIds = await this.getNestedFiles(file.id, allFiles);
+                fileIds.push(...nestedIds);
+            }
+        }
+
+        return fileIds;
     }
 }

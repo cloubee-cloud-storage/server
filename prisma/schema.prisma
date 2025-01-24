@@ -48,6 +48,7 @@ model File {
     thumbnailSmall  String?  @map("thumbnail_small")
     directoryId     String?  @map("directory_id")
     isDirectory     Boolean  @default(false) @map("is_directory")
+    isDeleted       Boolean  @default(false) @map("is_deleted")
     createdAt       DateTime @default(now()) @map("created_at")
     updatedAt       DateTime @updatedAt @map("updated_at")
 

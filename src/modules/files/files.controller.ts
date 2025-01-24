@@ -1,6 +1,7 @@
 import {
     Body,
     Controller,
+    Delete,
     Get,
     Param,
     Post,
@@ -39,6 +40,12 @@ export class FilesController {
         return this.filesService.getAll(userId, directoryId);
     }
 
+    @Get('trash')
+    @ApiBearerAuth()
+    getTrash(@UserId() userId: string) {
+        return this.filesService.getTrashFiles(userId);
+    }
+
     @Post('mkdir')
     @ApiBearerAuth()
     mkdir(@UserId() userId: string, @Body() dto: MkdirDto) {
@@ -68,7 +75,7 @@ export class FilesController {
 
     @Get(':fileId')
     @ApiBearerAuth()
-    async getFile(
+    getFile(
         @UserId() userId: string,
         @Param('fileId') fileId: string,
         @Res() res: Response,
@@ -83,7 +90,7 @@ export class FilesController {
         example: 'medium',
     })
     @ApiBearerAuth()
-    async getThumbnail(
+    getThumbnail(
         @UserId() userId: string,
         @Param('fileId') fileId: string,
         @Param('size') size: 'small' | 'medium' | 'large',
@@ -94,11 +101,32 @@ export class FilesController {
 
     @Post('rename/:fileId/:fileName')
     @ApiBearerAuth()
-    async rename(
+    rename(
         @UserId() userId: string,
         @Param('fileId') fileId: string,
         @Param('fileName') fileName: string,
     ) {
         return this.filesService.rename(userId, fileId, fileName);
+    }
+
+    @Delete(':fileId')
+    @ApiBearerAuth()
+    moveToTrash(@UserId() userId: string, @Param('fileId') fileId: string) {
+        return this.filesService.moveToTrash(userId, fileId);
+    }
+
+    @Post('trash/restore/:fileId')
+    @ApiBearerAuth()
+    moveFromTrash(@UserId() userId: string, @Param('fileId') fileId: string) {
+        return this.filesService.moveFromTrash(userId, fileId);
+    }
+
+    @Delete('trash/:fileId')
+    @ApiBearerAuth()
+    deletePermanently(
+        @UserId() userId: string,
+        @Param('fileId') fileId: string,
+    ) {
+        return this.filesService.deletePermanently(userId, fileId);
     }
 }
