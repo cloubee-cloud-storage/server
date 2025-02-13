@@ -6,6 +6,7 @@ import {
     NotFoundException,
 } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
+import * as archiver from 'archiver';
 import * as Busboy from 'busboy';
 import { Request, Response } from 'express';
 import * as fs from 'fs';
@@ -322,30 +323,65 @@ export class FilesService {
         res: Response,
         filePathFunc?: (file: File) => string,
     ) {
-        const file = await this.prisma.file.findUnique({
-            where: { id: fileId, userId: userId },
+        try {
+            const file = await this.prisma.file.findUnique({
+                where: { id: fileId, userId: userId },
+            });
+
+            if (!file) {
+                return res.status(HttpStatus.NOT_FOUND).json({
+                    message: 'File not found',
+                });
+            }
+
+            const filePath = filePathFunc
+                ? filePathFunc(file)
+                : path.join(
+                      this.config.getOrThrow<string>('STORAGE_PATH'),
+                      file.path,
+                  );
+
+            if (!fs.existsSync(filePath)) {
+                return res.status(HttpStatus.NOT_FOUND).json({
+                    message: 'File not found',
+                });
+            }
+
+            if (file.isDirectory) {
+                await this.sendArchive(res, filePath, path.basename(filePath));
+                return;
+            }
+
+            return res.sendFile(filePath);
+        } catch {
+            return res.status(HttpStatus.INTERNAL_SERVER_ERROR).json({
+                message: 'Internal server error',
+            });
+        }
+    }
+
+    private async sendArchive(
+        res: Response,
+        filePath: string,
+        filename: string,
+    ) {
+        res.setHeader('Content-Type', 'application/zip');
+        res.setHeader(
+            'Content-Disposition',
+            `attachment; filename="${filename}.zip"`,
+        );
+
+        const archive = archiver('zip', { zlib: { level: 1 } });
+
+        archive.on('error', () => {
+            res.status(500).send('Ошибка создания архива');
         });
 
-        if (!file) {
-            return res.status(HttpStatus.NOT_FOUND).json({
-                message: 'File not found',
-            });
-        }
+        archive.pipe(res);
 
-        const filePath = filePathFunc
-            ? filePathFunc(file)
-            : path.join(
-                  this.config.getOrThrow<string>('STORAGE_PATH'),
-                  file.path,
-              );
+        archive.directory(filePath, false);
 
-        if (!fs.existsSync(filePath)) {
-            return res.status(HttpStatus.NOT_FOUND).json({
-                message: 'File not found',
-            });
-        }
-
-        res.sendFile(filePath);
+        await archive.finalize();
     }
 
     public async getThumbnail(
