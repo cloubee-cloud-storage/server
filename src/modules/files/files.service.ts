@@ -555,7 +555,11 @@ export class FilesService {
             );
 
             if (!file.isDirectory) {
-                await this.deleteFile(filePath);
+                await this.deleteFile(filePath, {
+                    small: file.thumbnailSmall,
+                    medium: file.thumbnailMedium,
+                    large: file.thumbnailLarge,
+                });
                 await this.prisma.file.delete({ where: { id: fileId } });
                 return { message: 'File deleted successfully' };
             }
@@ -567,7 +571,7 @@ export class FilesService {
             const fileIds = await this.getNestedFiles(fileId, allUserFiles);
             fileIds.push(file.id);
 
-            await this.deleteDirectory(filePath);
+            await this.deleteDirectory(filePath, fileIds);
             await this.prisma.file.deleteMany({
                 where: { id: { in: fileIds } },
             });
@@ -581,17 +585,53 @@ export class FilesService {
         }
     }
 
-    private async deleteFile(filePath: string) {
+    private async deleteFile(
+        filePath: string,
+        thumbnails?: {
+            small: string;
+            medium: string;
+            large: string;
+        },
+    ) {
         try {
             await fs.promises.rm(filePath);
+            await Promise.all([
+                fs.promises.rm(thumbnails.small, { force: true }),
+                fs.promises.rm(thumbnails.medium, { force: true }),
+                fs.promises.rm(thumbnails.large, { force: true }),
+            ]);
         } catch {
             throw new InternalServerErrorException('Error deleting file');
         }
     }
 
-    private async deleteDirectory(dirPath: string) {
+    private async deleteDirectory(dirPath: string, fileIds: string[]) {
         try {
             await fs.promises.rm(dirPath, { recursive: true });
+            const filesWithThumbnails = await this.prisma.file.findMany({
+                where: {
+                    id: { in: fileIds },
+                },
+                select: {
+                    thumbnailSmall: true,
+                    thumbnailMedium: true,
+                    thumbnailLarge: true,
+                },
+            });
+
+            const thumbnailPaths = filesWithThumbnails.flatMap(file =>
+                [
+                    file.thumbnailSmall,
+                    file.thumbnailMedium,
+                    file.thumbnailLarge,
+                ].filter(Boolean),
+            );
+
+            await Promise.all(
+                thumbnailPaths.map(thumbnail =>
+                    fs.promises.rm(thumbnail, { force: true }),
+                ),
+            );
         } catch {
             throw new InternalServerErrorException('Error deleting directory');
         }
