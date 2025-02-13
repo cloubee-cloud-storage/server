@@ -300,9 +300,6 @@ export class FilesService {
             if (!uploadError) {
                 res.status(HttpStatus.OK).json({
                     message: 'File uploaded successfully.',
-                    file: fileName,
-                    size: fileSize,
-                    path: uploadDir,
                 });
             }
         });
