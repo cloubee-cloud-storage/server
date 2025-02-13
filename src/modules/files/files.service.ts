@@ -596,9 +596,27 @@ export class FilesService {
         try {
             await fs.promises.rm(filePath);
             await Promise.all([
-                fs.promises.rm(thumbnails.small, { force: true }),
-                fs.promises.rm(thumbnails.medium, { force: true }),
-                fs.promises.rm(thumbnails.large, { force: true }),
+                fs.promises.rm(
+                    path.join(
+                        this.config.getOrThrow<string>('STORAGE_PATH'),
+                        thumbnails.small,
+                    ),
+                    { force: true },
+                ),
+                fs.promises.rm(
+                    path.join(
+                        this.config.getOrThrow<string>('STORAGE_PATH'),
+                        thumbnails.medium,
+                    ),
+                    { force: true },
+                ),
+                fs.promises.rm(
+                    path.join(
+                        this.config.getOrThrow<string>('STORAGE_PATH'),
+                        thumbnails.large,
+                    ),
+                    { force: true },
+                ),
             ]);
         } catch {
             throw new InternalServerErrorException('Error deleting file');
@@ -629,7 +647,13 @@ export class FilesService {
 
             await Promise.all(
                 thumbnailPaths.map(thumbnail =>
-                    fs.promises.rm(thumbnail, { force: true }),
+                    fs.promises.rm(
+                        path.join(
+                            this.config.getOrThrow<string>('STORAGE_PATH'),
+                            thumbnail,
+                        ),
+                        { force: true },
+                    ),
                 ),
             );
         } catch {
