@@ -188,6 +188,7 @@ export class FilesService {
                         userId: userId,
                         name: fileName,
                         directoryId: directoryId ?? null,
+                        isDeleted: false,
                     },
                 });
 
@@ -528,16 +529,37 @@ export class FilesService {
     }
 
     public async moveFromTrash(userId: string, fileId: string) {
-        try {
-            await this.prisma.file.update({
-                where: { id: fileId, userId: userId, isDeleted: true },
-                data: { isDeleted: false },
-            });
+        const file = await this.prisma.file.findUniqueOrThrow({
+            where: { id: fileId },
+        });
 
-            return { message: 'File restored successfully' };
-        } catch {
-            throw new BadRequestException('File recovery error');
+        if (!file) {
+            throw new NotFoundException('File not found');
         }
+
+        if (!file.isDeleted) {
+            throw new BadRequestException('File is not in trash');
+        }
+
+        const isNotFreeName = await this.prisma.file.findFirst({
+            where: {
+                userId: userId,
+                name: file.name,
+                directoryId: file.directoryId,
+                isDeleted: false,
+            },
+        });
+
+        if (isNotFreeName) {
+            throw new BadRequestException('Name already exists.');
+        }
+
+        await this.prisma.file.update({
+            where: { id: fileId, userId: userId, isDeleted: true },
+            data: { isDeleted: false },
+        });
+
+        return { message: 'File restored successfully' };
     }
 
     public async deletePermanently(userId: string, fileId: string) {
