@@ -79,7 +79,15 @@ export const generateThumbnails = async (
 
             await sharp(fullFilePath).resize(size.width).toFile(thumbnailPath);
 
-            thumbnailPaths.push(thumbnailPath);
+            thumbnailPaths.push(
+                path.join(
+                    userId,
+                    'thumbnails',
+                    isVideo
+                        ? `${size.name}_${fileId}.jpg`
+                        : `${size.name}_${fileId}${path.extname(filePath)}`,
+                ),
+            );
         }
 
         if (isVideo) {
