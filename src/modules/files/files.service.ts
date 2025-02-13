@@ -358,30 +358,6 @@ export class FilesService {
         }
     }
 
-    private async sendArchive(
-        res: Response,
-        filePath: string,
-        filename: string,
-    ) {
-        res.setHeader('Content-Type', 'application/zip');
-        res.setHeader(
-            'Content-Disposition',
-            `attachment; filename="${filename}.zip"`,
-        );
-
-        const archive = archiver('zip', { zlib: { level: 1 } });
-
-        archive.on('error', () => {
-            res.status(500).send('Ошибка создания архива');
-        });
-
-        archive.pipe(res);
-
-        archive.directory(filePath, false);
-
-        await archive.finalize();
-    }
-
     public async getThumbnail(
         userId: string,
         fileId: string,
@@ -465,43 +441,6 @@ export class FilesService {
         );
 
         return { message: 'Directory renamed successfully.' };
-    }
-
-    private async renamePath(oldPath: string, newPath: string) {
-        try {
-            await fs.promises.rename(oldPath, newPath);
-        } catch {
-            throw new InternalServerErrorException('Error renaming path');
-        }
-    }
-
-    private async updateNestedPaths(
-        oldBasePath: string,
-        newBasePath: string,
-        files: File[],
-    ) {
-        for (const file of files) {
-            const newFilePath = path.join(
-                newBasePath,
-                path.relative(oldBasePath, file.path),
-            );
-
-            await this.prisma.file.update({
-                where: { id: file.id },
-                data: { path: newFilePath },
-            });
-
-            if (file.isDirectory) {
-                const nestedFiles = await this.prisma.file.findMany({
-                    where: { directoryId: file.id },
-                });
-                await this.updateNestedPaths(
-                    file.path,
-                    newFilePath,
-                    nestedFiles,
-                );
-            }
-        }
     }
 
     public async moveToTrash(userId: string, fileId: string) {
@@ -601,6 +540,67 @@ export class FilesService {
                 throw error;
             }
             throw new InternalServerErrorException('Unexpected error occurred');
+        }
+    }
+
+    private async sendArchive(
+        res: Response,
+        filePath: string,
+        filename: string,
+    ) {
+        res.setHeader('Content-Type', 'application/zip');
+        res.setHeader(
+            'Content-Disposition',
+            `attachment; filename="${filename}.zip"`,
+        );
+
+        const archive = archiver('zip', { zlib: { level: 1 } });
+
+        archive.on('error', () => {
+            res.status(500).send('Ошибка создания архива');
+        });
+
+        archive.pipe(res);
+
+        archive.directory(filePath, false);
+
+        await archive.finalize();
+    }
+
+    private async renamePath(oldPath: string, newPath: string) {
+        try {
+            await fs.promises.rename(oldPath, newPath);
+        } catch {
+            throw new InternalServerErrorException('Error renaming path');
+        }
+    }
+
+    private async updateNestedPaths(
+        oldBasePath: string,
+        newBasePath: string,
+        files: File[],
+    ) {
+        for (const file of files) {
+            const newFilePath = path.join(
+                newBasePath,
+                path.relative(oldBasePath, file.path),
+            );
+
+            await this.prisma.file.update({
+                where: { id: file.id },
+                data: { path: newFilePath },
+            });
+
+            if (file.isDirectory) {
+                const nestedFiles = await this.prisma.file.findMany({
+                    where: { directoryId: file.id },
+                });
+                await this.updateNestedPaths(
+                    file.path,
+                    newFilePath,
+                    nestedFiles,
+                );
+            }
         }
     }
 
