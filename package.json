@@ -31,7 +31,6 @@
     "@nestjs/passport": "^10.0.3",
     "@nestjs/platform-express": "^10.0.0",
     "@nestjs/swagger": "^8.1.0",
-    "@scalar/nestjs-api-reference": "^0.3.174",
     "@types/fluent-ffmpeg": "^2.1.27",
     "archiver": "^7.0.1",
     "bcrypt": "^5.1.1",
