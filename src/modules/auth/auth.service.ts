@@ -7,22 +7,25 @@ import {
 import { ConfigService } from '@nestjs/config';
 import { JwtService } from '@nestjs/jwt';
 import * as bcrypt from 'bcrypt';
+import { Response } from 'express';
 import * as fs from 'node:fs';
 import * as path from 'node:path';
 
 import { PrismaService } from '@/core/prisma/prisma.service';
 
-import { AuthEntity } from './entity/auth.entity';
-
 @Injectable()
 export class AuthService {
     constructor(
-        private prisma: PrismaService,
-        private jwtService: JwtService,
+        private readonly prisma: PrismaService,
+        private readonly jwtService: JwtService,
         private readonly config: ConfigService,
     ) {}
 
-    public async login(email: string, password: string): Promise<AuthEntity> {
+    public async login(
+        email: string,
+        password: string,
+        res: Response,
+    ): Promise<{ message: string }> {
         const user = await this.prisma.user.findUnique({
             where: { email: email },
         });
@@ -37,11 +40,26 @@ export class AuthService {
             throw new UnauthorizedException('Invalid password');
         }
 
-        return {
-            accessToken: this.jwtService.sign({
-                userId: user.id,
-            }),
-        };
+        const accessToken = this.jwtService.sign({ userId: user.id });
+
+        res.cookie('access_token', accessToken, {
+            httpOnly: true,
+            secure: this.config.get<string>('NODE_ENV') === 'production',
+            sameSite: 'strict',
+            maxAge: 1000 * 60 * 60 * 24 * 30, // 30 дней
+        });
+
+        return { message: `Logged in successfully.` };
+    }
+
+    public async logout(res: Response): Promise<{ message: string }> {
+        res.clearCookie('access_token', {
+            httpOnly: true,
+            secure: this.config.getOrThrow<string>('NODE_ENV') === 'production',
+            sameSite: 'lax',
+        });
+
+        return { message: 'Exit successful' };
     }
 
     public async register(inviteToken: string, name: string, password: string) {

@@ -1,9 +1,9 @@
-import { Body, Controller, Post } from '@nestjs/common';
-import { ApiOkResponse, ApiTags } from '@nestjs/swagger';
+import { Body, Controller, Post, Res } from '@nestjs/common';
+import { ApiTags } from '@nestjs/swagger';
+import { Response } from 'express';
 
 import { LoginDto } from '@/modules/auth/dto/login.dto';
 import { RegisterDto } from '@/modules/auth/dto/register.dto';
-import { AuthEntity } from '@/modules/auth/entity/auth.entity';
 
 import { AuthService } from './auth.service';
 
@@ -13,9 +13,16 @@ export class AuthController {
     constructor(private readonly authService: AuthService) {}
 
     @Post('login')
-    @ApiOkResponse({ type: AuthEntity })
-    login(@Body() loginDto: LoginDto) {
-        return this.authService.login(loginDto.email, loginDto.password);
+    login(
+        @Body() loginDto: LoginDto,
+        @Res({ passthrough: true }) res: Response,
+    ) {
+        return this.authService.login(loginDto.email, loginDto.password, res);
+    }
+
+    @Post('logout')
+    logout(@Res() res: Response) {
+        return res.json(this.authService.logout(res));
     }
 
     @Post('register')

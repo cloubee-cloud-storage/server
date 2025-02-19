@@ -2,6 +2,7 @@ import { Logger, ValidationPipe } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { NestFactory } from '@nestjs/core';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
+import * as cookieParser from 'cookie-parser';
 
 import { CoreModule } from './core/core.module';
 
@@ -16,6 +17,7 @@ async function bootstrap() {
         exposedHeaders: ['set-cookie'],
     });
 
+    app.use(cookieParser());
     app.useGlobalPipes(new ValidationPipe());
     app.useLogger(new Logger());
 
