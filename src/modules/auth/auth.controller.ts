@@ -1,4 +1,4 @@
-import { Body, Controller, Post, Res } from '@nestjs/common';
+import { Body, Controller, Get, Post, Res } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
 import { Response } from 'express';
 
@@ -32,5 +32,10 @@ export class AuthController {
             registerDto.name,
             registerDto.password,
         );
+    }
+
+    @Get('is-admin-exist')
+    async isAdminExist() {
+        return this.authService.isAdminExist();
     }
 }

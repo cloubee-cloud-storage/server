@@ -30,13 +30,13 @@ export class AuthService {
         });
 
         if (!user) {
-            throw new NotFoundException(`USER_NOT_FOUND`);
+            throw new NotFoundException('NOT_FOUND');
         }
 
         const isPasswordValid = await bcrypt.compare(user.password, password);
 
         if (!isPasswordValid) {
-            throw new ForbiddenException('INVALID_PASSWORD');
+            throw new NotFoundException('NOT_FOUND');
         }
 
         const accessToken = this.jwtService.sign({ userId: user.id });
@@ -45,7 +45,7 @@ export class AuthService {
             httpOnly: true,
             secure: this.config.get<string>('NODE_ENV') === 'production',
             sameSite: 'strict',
-            maxAge: 1000 * 60 * 60 * 24 * 30, // 30 дней
+            maxAge: 1000 * 60 * 60 * 24 * 30,
         });
 
         return { message: `Logged in successfully.` };
@@ -100,5 +100,13 @@ export class AuthService {
         } catch {
             throw new ForbiddenException('Unable to register user');
         }
+    }
+
+    public async isAdminExist(): Promise<{ hasAdmin: boolean }> {
+        const admin = await this.prisma.user.findFirst({
+            where: { role: 'ADMIN' },
+        });
+
+        return { hasAdmin: !!admin };
     }
 }
