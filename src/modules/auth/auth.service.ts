@@ -30,13 +30,13 @@ export class AuthService {
         });
 
         if (!user) {
-            throw new NotFoundException(`No user found for email: ${email}`);
+            throw new NotFoundException(`USER_NOT_FOUND`);
         }
 
         const isPasswordValid = await bcrypt.compare(user.password, password);
 
         if (!isPasswordValid) {
-            throw new ForbiddenException('Invalid password');
+            throw new ForbiddenException('INVALID_PASSWORD');
         }
 
         const accessToken = this.jwtService.sign({ userId: user.id });
