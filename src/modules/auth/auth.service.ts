@@ -2,7 +2,6 @@ import {
     ForbiddenException,
     Injectable,
     NotFoundException,
-    UnauthorizedException,
 } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { JwtService } from '@nestjs/jwt';
@@ -37,7 +36,7 @@ export class AuthService {
         const isPasswordValid = await bcrypt.compare(user.password, password);
 
         if (!isPasswordValid) {
-            throw new UnauthorizedException('Invalid password');
+            throw new ForbiddenException('Invalid password');
         }
 
         const accessToken = this.jwtService.sign({ userId: user.id });
