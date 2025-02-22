@@ -1,9 +1,11 @@
-import { Body, Controller, Get, Post, Res } from '@nestjs/common';
+import { Body, Controller, Get, Post, Res, UseGuards } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
 import { Response } from 'express';
 
 import { LoginDto } from '@/modules/auth/dto/login.dto';
+import { RegisterAdminDto } from '@/modules/auth/dto/register-admin.dto';
 import { RegisterDto } from '@/modules/auth/dto/register.dto';
+import { JwtAuthGuard } from '@/shared/guards/jwt-auth.guard';
 
 import { AuthService } from './auth.service';
 
@@ -34,8 +36,27 @@ export class AuthController {
         );
     }
 
+    @Post('register-admin')
+    registerAdmin(
+        @Body() registerAdminDto: RegisterAdminDto,
+        @Res({ passthrough: true }) res: Response,
+    ) {
+        return this.authService.registerAdmin(
+            registerAdminDto.name,
+            registerAdminDto.email,
+            registerAdminDto.password,
+            res,
+        );
+    }
+
     @Get('is-admin-exist')
     async isAdminExist() {
         return this.authService.isAdminExist();
+    }
+
+    @UseGuards(JwtAuthGuard)
+    @Get('validate-request')
+    validateRequest() {
+        return { message: 'AUTHORIZED' };
     }
 }

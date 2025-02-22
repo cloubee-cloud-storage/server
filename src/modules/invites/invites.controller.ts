@@ -37,7 +37,6 @@ export class InvitesController {
     create(@Body() createInviteDto: CreateInviteDto) {
         return this.inviteService.createInvite(
             createInviteDto.email,
-            createInviteDto.role,
             createInviteDto.storageQuota,
         );
     }

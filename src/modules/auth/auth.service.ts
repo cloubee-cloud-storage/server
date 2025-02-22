@@ -1,4 +1,5 @@
 import {
+    ConflictException,
     ForbiddenException,
     Injectable,
     NotFoundException,
@@ -11,6 +12,8 @@ import * as fs from 'node:fs';
 import * as path from 'node:path';
 
 import { PrismaService } from '@/core/prisma/prisma.service';
+
+import { Role } from '../../../prisma/generated';
 
 @Injectable()
 export class AuthService {
@@ -33,7 +36,7 @@ export class AuthService {
             throw new NotFoundException('NOT_FOUND');
         }
 
-        const isPasswordValid = await bcrypt.compare(user.password, password);
+        const isPasswordValid = await bcrypt.compare(password, user.password);
 
         if (!isPasswordValid) {
             throw new NotFoundException('NOT_FOUND');
@@ -73,7 +76,7 @@ export class AuthService {
                     name: name,
                     email: invite.email,
                     password: hashedPassword,
-                    role: invite.role,
+                    role: Role.USER,
                     storageQuota: invite.storageQuota,
                 },
             });
@@ -102,11 +105,72 @@ export class AuthService {
         }
     }
 
-    public async isAdminExist(): Promise<{ hasAdmin: boolean }> {
+    public async registerAdmin(
+        name: string,
+        email: string,
+        password: string,
+        res: Response,
+    ) {
+        try {
+            const hasAdmin = await this.isAdminExist();
+
+            if (hasAdmin) {
+                throw new ConflictException();
+            }
+
+            const hashedPassword = await bcrypt.hash(password, 10);
+            const user = await this.prisma.user.create({
+                data: {
+                    name: name,
+                    email: email,
+                    password: hashedPassword,
+                    role: Role.ADMIN,
+                    storageQuota: Number(
+                        this.config.getOrThrow<number>(
+                            'STORAGE_TOTAL_POOL_BYTES',
+                        ),
+                    ),
+                },
+            });
+
+            const userFolder = path.join(
+                this.config.getOrThrow<string>('STORAGE_PATH'),
+                user.id,
+            );
+
+            if (!fs.existsSync(userFolder)) {
+                fs.mkdirSync(path.join(userFolder, 'files'), {
+                    recursive: true,
+                });
+                fs.mkdirSync(path.join(userFolder, 'thumbnails'), {
+                    recursive: true,
+                });
+            }
+
+            const accessToken = this.jwtService.sign({ userId: user.id });
+
+            res.cookie('access_token', accessToken, {
+                httpOnly: true,
+                secure: this.config.get<string>('NODE_ENV') === 'production',
+                sameSite: 'strict',
+                maxAge: 1000 * 60 * 60 * 24 * 30,
+            });
+
+            return { message: 'Admin successfully registered' };
+        } catch (error) {
+            if (error instanceof ConflictException) {
+                throw new ConflictException('ADMIN_ALREADY_EXISTS');
+            }
+
+            throw new ForbiddenException('Unable to register user');
+        }
+    }
+
+    public async isAdminExist(): Promise<boolean> {
         const admin = await this.prisma.user.findFirst({
             where: { role: 'ADMIN' },
         });
 
-        return { hasAdmin: !!admin };
+        return !!admin;
     }
 }

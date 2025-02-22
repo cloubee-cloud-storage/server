@@ -267,7 +267,7 @@ export class FilesService {
                         await this.prisma.user.update({
                             where: { id: userId },
                             data: {
-                                usedQuota: usedSpace + fileSize,
+                                usedQuota: usedSpace + BigInt(fileSize),
                             },
                         });
                     } catch (dbError) {

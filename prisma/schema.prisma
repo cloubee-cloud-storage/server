@@ -15,8 +15,8 @@ model User {
     password     String
     avatarPath   String?  @map("avatar_path")
     role         Role     @default(USER)
-    storageQuota Int      @default(0) @map("storage_quota")
-    usedQuota    Int      @default(0) @map("used_quota")
+    storageQuota BigInt   @default(0) @map("storage_quota")
+    usedQuota    BigInt   @default(0) @map("used_quota")
     createdAt    DateTime @default(now()) @map("created_at")
     updatedAt    DateTime @updatedAt @map("updated_at")
     files        File[]
@@ -29,7 +29,7 @@ model Invite {
     email        String   @unique
     token        String   @unique
     role         Role     @default(USER)
-    storageQuota Int      @default(0) @map("storage_quota")
+    storageQuota BigInt   @default(0) @map("storage_quota")
     createdAt    DateTime @default(now()) @map("created_at")
 
     @@map("invites")
@@ -41,7 +41,7 @@ model File {
     user            User     @relation(fields: [userId], references: [id])
     name            String
     mimeType        String?  @map("mime_type")
-    size            Int
+    size            BigInt
     path            String
     thumbnailLarge  String?  @map("thumbnail_large")
     thumbnailMedium String?  @map("thumbnail_medium")

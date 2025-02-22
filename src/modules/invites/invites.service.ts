@@ -3,12 +3,11 @@ import { v4 as uuidv4 } from 'uuid';
 
 import { PrismaService } from '@/core/prisma/prisma.service';
 
-import { Role } from '../../../prisma/generated';
-
 @Injectable()
 export class InvitesService {
     constructor(private readonly prisma: PrismaService) {}
-    public async createInvite(email: string, role: Role, storageQuota: number) {
+
+    public async createInvite(email: string, storageQuota: number) {
         const existingInvite = await this.prisma.invite.findFirst({
             where: { email: email },
         });
@@ -27,7 +26,6 @@ export class InvitesService {
         await this.prisma.invite.create({
             data: {
                 email: email,
-                role: role,
                 storageQuota: storageQuota,
                 token: token,
             },
