@@ -1,4 +1,8 @@
-import { BadRequestException, Injectable } from '@nestjs/common';
+import {
+    BadRequestException,
+    Injectable,
+    NotFoundException,
+} from '@nestjs/common';
 import { v4 as uuidv4 } from 'uuid';
 
 import { PrismaService } from '@/core/prisma/prisma.service';
@@ -45,7 +49,11 @@ export class InvitesService {
             },
         });
 
-        return !!invite;
+        if (!invite) {
+            throw new NotFoundException('NOT_FOUND');
+        }
+
+        return invite.email;
     }
 
     public async deleteInvite(id: string) {

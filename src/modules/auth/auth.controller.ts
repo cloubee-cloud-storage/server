@@ -27,12 +27,16 @@ export class AuthController {
         return res.json(this.authService.logout(res));
     }
 
-    @Post('register')
-    register(@Body() registerDto: RegisterDto) {
-        return this.authService.register(
+    @Post('register-invited')
+    register(
+        @Body() registerDto: RegisterDto,
+        @Res({ passthrough: true }) res: Response,
+    ) {
+        return this.authService.registerInvited(
             registerDto.token,
             registerDto.name,
             registerDto.password,
+            res,
         );
     }
 

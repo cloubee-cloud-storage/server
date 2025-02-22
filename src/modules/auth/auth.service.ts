@@ -64,7 +64,12 @@ export class AuthService {
         return { message: 'Exit successful' };
     }
 
-    public async register(inviteToken: string, name: string, password: string) {
+    public async registerInvited(
+        inviteToken: string,
+        name: string,
+        password: string,
+        res: Response,
+    ) {
         try {
             const invite = await this.prisma.invite.findUnique({
                 where: { token: inviteToken },
@@ -97,6 +102,15 @@ export class AuthService {
 
             await this.prisma.invite.delete({
                 where: { token: inviteToken },
+            });
+
+            const accessToken = this.jwtService.sign({ userId: user.id });
+
+            res.cookie('access_token', accessToken, {
+                httpOnly: true,
+                secure: this.config.get<string>('NODE_ENV') === 'production',
+                sameSite: 'strict',
+                maxAge: 1000 * 60 * 60 * 24 * 30,
             });
 
             return { message: 'User successfully registered' };
